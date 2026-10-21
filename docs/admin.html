@@ -393,7 +393,7 @@ const store={
   }
 };
 async function fetchJson(url){try{const r=await fetch(url+(url.includes('?')?'&':'?')+'t='+Date.now(),{cache:'no-store'});if(r.ok)return await r.json();}catch(e){}return null;}
-const utf8b64={enc:s=>btoa(String.fromCharCode(...new TextEncoder().encode(s))),dec:b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')),c=>c.charCodeAt(0)))};
+const utf8b64={enc:s=>{const b=new TextEncoder().encode(s);let bin='';for(let i=0;i<b.length;i+=8192)bin+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(bin);},dec:b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')),c=>c.charCodeAt(0)))};
 /* Document-level 3-way merge: apply what changed here (BASE -> cur) on top of what is now on the server. */
 function mergeData(remote,base,cur){
   const out=clone(remote||{});out.settings=out.settings||{};['teams','houses','games'].forEach(c=>{out[c]=out[c]||{};});
