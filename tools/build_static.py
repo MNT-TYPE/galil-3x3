@@ -23,10 +23,13 @@ def page(attrs):
     s, n = re.subn(r'src="assets/logo-224\.jpg"', f'src="data:image/jpeg;base64,{b64}"', s); assert n == 1
     return s
 
+import time
+build = time.strftime("%Y%m%d-%H%M%S")
 os.makedirs(out, exist_ok=True)
-open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(page(' data-public="1"'))
+json.dump({"build": build}, open(os.path.join(out, "version.json"), "w"))
+open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(page(f' data-public="1" data-build="{build}"'))
 json.dump(data, open(os.path.join(out, "data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-made = ["index.html", "data.json"]
+made = ["index.html", "data.json", "version.json"]
 if github:
-    open(os.path.join(out, "admin.html"), "w", encoding="utf-8").write(page(f' data-github="{github}"')); made.append("admin.html")
+    open(os.path.join(out, "admin.html"), "w", encoding="utf-8").write(page(f' data-github="{github}" data-build="{build}"')); made.append("admin.html")
 print(f"wrote {', '.join(made)} in {os.path.relpath(out, root)}/ (data from {os.path.relpath(data_path, root)})")

@@ -343,6 +343,7 @@ const store={
     const tag=$('#tournament-data');
     let embedded=null;try{const raw=tag.textContent.trim();if(raw)embedded=JSON.parse(raw);}catch(e){console.error('bad embedded data',e);}
     const cl=window.claude;
+    if(tag.dataset.build)freshness.check(tag.dataset.build); // static site: reload once if the browser cached an older copy
     if(tag.dataset.github){ // management page on GitHub Pages: edits are saved to the repository
       S.backend='github';S.canWrite=true;gh.configure(tag.dataset.github);
       const remote=await gh.loadLatest();if(remote)embedded=remote;
@@ -448,6 +449,8 @@ const gh={
     S.publishing=false;render();
   }
 };
+const freshness={async check(build){try{const v=await fetchJson('version.json');if(!v||!v.build||v.build===build)return;const k='g3x3.reloaded.'+v.build;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');
+  location.replace(location.pathname+'?b='+encodeURIComponent(v.build)+location.hash);}catch(e){}}};
 const liveRefresh={timer:null,start(){const tick=async()=>{if(document.hidden)return;const d=await fetchJson('data.json');if(d&&JSON.stringify(d)!==JSON.stringify(store.snapshot())){store.load(d);BASE=clone(store.snapshot());render();}};
   this.timer=setInterval(tick,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});}};
 function saveDoc(coll,id,data){const clean=clone(data);delete clean.id;S[coll][id]=clean;store.persist();scheduleRender();}
