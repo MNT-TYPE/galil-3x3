@@ -8,12 +8,13 @@ cd "$(dirname "$0")/.."
 DATA="${1:-seed.json}"
 if [ "$DATA" != "seed.json" ]; then cp "$DATA" seed.json; fi
 REMOTE="$(git remote get-url origin 2>/dev/null || true)"
-SHARE=""
-case "$REMOTE" in
-  *github.com*) SHARE="$(printf '%s' "$REMOTE" | sed -E 's#.*github\.com[:/]([^/]+)/([^/.]+)(\.git)?$#https://\1.github.io/\2/#' | tr 'A-Z' 'a-z')";;
-esac
-if [ -n "$SHARE" ]; then python3 tools/build_static.py --data seed.json --out docs/index.html --share-url "$SHARE"
-else python3 tools/build_static.py --data seed.json --out docs/index.html; fi
+SLUG="$(printf '%s' "$REMOTE" | sed -E 's#.*github\.com[:/]([^/]+)/([^/.]+)(\.git)?$#\1/\2#')"
+if [ -n "$SLUG" ] && [ "$SLUG" != "$REMOTE" ]; then
+  SHARE="https://$(printf '%s' "$SLUG" | tr 'A-Z' 'a-z' | sed -E 's#([^/]+)/(.+)#\1.github.io/\2/#')"
+  python3 tools/build_static.py --data seed.json --out docs --github "$SLUG@main:docs/data.json" --share-url "$SHARE"
+else
+  SHARE=""; python3 tools/build_static.py --data seed.json --out docs
+fi
 git add -A
 git commit -m "Update tournament board $(date '+%Y-%m-%d %H:%M')" || echo "nothing changed"
 if [ -n "$REMOTE" ]; then git push; echo "Published. Parents' link: ${SHARE:-see your GitHub Pages settings}"; else echo "No git remote yet: see README for the one-time GitHub setup."; fi

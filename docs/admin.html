@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אליפות הגליל 3X3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&family=Secular+One&display=swap">
+<style>
+/* Layout: club-blue banner with the Hapoel Galil Elion crest, white tab strip, one content column.
+   Phones get a chronological list; wide screens get the time×court board. Brand: blue field, red lettering, gold hoop. */
+:root{
+  --blue:#1c4d9c; --blue-2:#3b7ddc; --red:#d2232a; --gold:#f2b31b; --gold-deep:#c98d00;
+  --bg:#eef1f6; --surface:#ffffff; --surface-2:#f4f6fa; --fg:#151a24; --muted:#5a6476; --line:#d8dde6; --line-strong:#b6bfcc;
+  --accent:var(--red); --accent-fg:#ffffff; --accent-soft:#fbe3e4;
+  --band:linear-gradient(135deg,#153f85 0%,#1f5bb3 55%,#2f74d0 100%); --band-fg:#ffffff; --band-muted:rgba(255,255,255,.78);
+  --danger:#b8352a; --danger-soft:#fbe3e0; --warn:#9a6700; --warn-soft:#fff3cc; --ok:#1f7a4d; --ok-soft:#def4e8;
+  --cat-1:#1f58b5; --cat-1-soft:#e1eafb; --cat-2:#1f8a5a; --cat-2-soft:#dcf2e6; --cat-3:#b73c8e; --cat-3-soft:#f8e1f0; --cat-4:#7a4fd0; --cat-4-soft:#ebe4fb; --cat-5:#b96a00; --cat-5-soft:#fdeccd;
+  --now:#fff3c4; --court-bg:#fff1c7; --court-fg:#6b4a00;
+  --font-body:"Heebo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --font-display:"Secular One","Heebo",system-ui,sans-serif;
+  --radius:12px; --shadow:0 1px 2px rgba(20,30,50,.06),0 6px 18px rgba(20,30,50,.07);
+  direction:rtl;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f1319; --surface:#181d26; --surface-2:#202733; --fg:#e9ecf1; --muted:#9ba5b4; --line:#2c3441; --line-strong:#434d5d;
+  --accent:#ef5a60; --accent-fg:#1a0a0b; --accent-soft:#3a1c1e;
+  --band:linear-gradient(135deg,#102f66 0%,#1a4a96 55%,#215fb6 100%); --band-muted:rgba(255,255,255,.72);
+  --danger:#f07b6e; --danger-soft:#3b1f1c; --warn:#e6b84a; --warn-soft:#3a3016; --ok:#5dcc93; --ok-soft:#173327;
+  --cat-1:#80aaf4; --cat-1-soft:#1c2a46; --cat-2:#62cf98; --cat-2-soft:#1a3328; --cat-3:#ec8fd0; --cat-3-soft:#3b1f33; --cat-4:#b7a2f6; --cat-4-soft:#2b2447; --cat-5:#f0a94a; --cat-5-soft:#3f2a0e;
+  --now:#4a3d12; --court-bg:#4a3a10; --court-fg:#ffd66b; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1319; --surface:#181d26; --surface-2:#202733; --fg:#e9ecf1; --muted:#9ba5b4; --line:#2c3441; --line-strong:#434d5d;
+  --accent:#ef5a60; --accent-fg:#1a0a0b; --accent-soft:#3a1c1e;
+  --band:linear-gradient(135deg,#102f66 0%,#1a4a96 55%,#215fb6 100%); --band-muted:rgba(255,255,255,.72);
+  --danger:#f07b6e; --danger-soft:#3b1f1c; --warn:#e6b84a; --warn-soft:#3a3016; --ok:#5dcc93; --ok-soft:#173327;
+  --cat-1:#80aaf4; --cat-1-soft:#1c2a46; --cat-2:#62cf98; --cat-2-soft:#1a3328; --cat-3:#ec8fd0; --cat-3-soft:#3b1f33; --cat-4:#b7a2f6; --cat-4-soft:#2b2447; --cat-5:#f0a94a; --cat-5-soft:#3f2a0e;
+  --now:#4a3d12; --court-bg:#4a3a10; --court-fg:#ffd66b; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0;font-weight:700;text-wrap:balance}
+a{color:var(--accent)}
+.num{font-variant-numeric:tabular-nums}
+
+/* Banner */
+.band{background:var(--band);color:var(--band-fg)}
+.band-in{max-width:1200px;margin:0 auto;padding:14px 16px 12px;display:flex;gap:14px;align-items:center}
+.crest{width:64px;height:64px;border-radius:50%;background:#fff;flex:0 0 auto;display:grid;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.25);overflow:hidden}
+.crest img{width:58px;height:58px;object-fit:contain;display:block}
+.band-text{min-width:0;flex:1}
+.eyebrow{font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--gold);font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.eyebrow .he{letter-spacing:0;text-transform:none;font-size:13px}
+.band h1{font-family:var(--font-display);font-weight:400;font-size:clamp(19px,2.6vw,28px);line-height:1.15;margin-top:2px}
+.band h1 .yr{color:var(--gold)}
+.band .meta{margin-top:4px;color:var(--band-muted);font-size:13px;display:flex;gap:6px 12px;flex-wrap:wrap;align-items:center}
+.band .meta .pill{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+.band .meta .pill.ro{background:rgba(242,179,27,.2);border-color:var(--gold);color:#ffe6a3}
+.band-actions{display:flex;gap:8px;flex:0 0 auto}
+.btn.ghost{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);color:#fff}
+.btn.ghost:hover{background:rgba(255,255,255,.22)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top-in{max-width:1200px;margin:0 auto;padding:0 10px}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:11px 12px 9px;color:var(--muted);cursor:pointer;font-weight:600;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-size:15px}
+.tab:hover{color:var(--fg)}
+.tab .short{display:none}
+@media (max-width:640px){.tabs{justify-content:space-between}.tab{padding:11px 8px 9px;font-size:14.5px;flex:1;justify-content:center}.tab .full{display:none}.tab .short{display:inline}}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--red)}
+.tab:focus-visible{outline:2px solid var(--blue-2);outline-offset:-2px}
+.badge{display:inline-block;min-width:18px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+.badge.warn{background:var(--gold);color:#3a2a00}
+.badge.info{background:var(--blue-2);color:#fff}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);white-space:nowrap}
+
+/* My-team strip */
+.mine{max-width:1200px;margin:10px auto 0;padding:0 16px}
+.mine-in{background:var(--surface);border:1px solid var(--gold);border-right:5px solid var(--gold);border-radius:10px;padding:8px 12px;display:flex;gap:8px 14px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow)}
+.mine-in .lbl{font-size:12px;color:var(--muted)}
+.mine-in b{font-size:16px}
+.mine-in .next{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.mine-in .x{margin-inline-start:auto}
+
+/* Filters */
+.filters{max-width:1200px;margin:0 auto;padding:12px 16px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;min-height:34px}
+.chip:hover{border-color:var(--fg)}
+.chip[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip.gold[aria-pressed="true"]{background:var(--gold);color:#2a1d00;border-color:var(--gold)}
+.chip .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.chip[aria-pressed="true"] .dot{background:#fff}
+.chip:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue-2);outline-offset:1px}
+.search{flex:1;min-width:200px;max-width:380px;padding:8px 14px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);font-size:16px}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;margin-inline-start:auto}
+.seg button{border:0;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* Main */
+main{max-width:1200px;margin:0 auto;padding-block:14px 56px;padding-inline:16px;display:flex;flex-direction:column;gap:18px}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:4px}
+.section-h h2{font-size:19px;font-family:var(--font-display);font-weight:400}
+.section-h .sub{color:var(--muted);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card h3{font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card .h-sub{color:var(--muted);font-size:13px;margin-top:2px}
+.empty{color:var(--muted);text-align:center;padding:36px 16px;border:1px dashed var(--line-strong);border-radius:var(--radius)}
+.empty b{color:var(--fg)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.cat{display:inline-flex;align-items:center;padding:1px 8px;border-radius:5px;font-size:11.5px;font-weight:700;background:var(--c-soft);color:var(--c);line-height:18px;white-space:nowrap}
+.c1{--c:var(--cat-1);--c-soft:var(--cat-1-soft)} .c2{--c:var(--cat-2);--c-soft:var(--cat-2-soft)} .c3{--c:var(--cat-3);--c-soft:var(--cat-3-soft)} .c4{--c:var(--cat-4);--c-soft:var(--cat-4-soft)} .c5{--c:var(--cat-5);--c-soft:var(--cat-5-soft)}
+.c0{--c:var(--muted);--c-soft:var(--surface-2)}
+.court{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:6px;background:var(--court-bg);color:var(--court-fg);font-weight:700;font-size:12.5px;white-space:nowrap}
+
+/* KPIs */
+.kpis{display:flex;gap:10px;flex-wrap:wrap}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:8px 14px;min-width:100px;flex:1}
+.kpi b{display:block;font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1.1;color:var(--blue)}
+.kpi span{font-size:12px;color:var(--muted)}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
+th,td{padding:8px 10px;text-align:right;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.3px;background:var(--surface-2);position:sticky;top:0;z-index:2;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.t{font-weight:700;white-space:nowrap}
+
+/* Board (time x court) */
+.board th{border-bottom:2px solid var(--gold)}
+.board th:first-child,.board td:first-child{position:sticky;right:0;z-index:3;background:var(--surface-2);min-width:64px;border-left:1px solid var(--line)}
+.board th:first-child{z-index:4}
+.board td{min-width:170px;padding:6px}
+.board tr.now td{background:var(--now)}
+.board tr.now td:first-child::after,.slot.now .slot-h::after{content:"עכשיו";display:inline-block;font-size:10px;color:var(--red);font-weight:700;margin-inline-start:6px;vertical-align:middle}
+.gcell{border-radius:8px;padding:6px 8px;background:var(--c-soft);border-right:3px solid var(--c);display:flex;flex-direction:column;gap:2px;margin-bottom:4px}
+.gcell:last-child{margin-bottom:0}
+.gcell .pair{font-weight:700;line-height:1.3}
+.gcell .vs{color:var(--muted);font-weight:400;font-size:12px;margin:0 5px}
+.gcell .sub{font-size:11.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.gcell .score{font-weight:700;color:var(--fg)}
+.gcell.err,.gl.err{outline:2px solid var(--danger);outline-offset:-1px}
+.tm{cursor:pointer;background:none;border:0;padding:0;font:inherit;font-weight:inherit;color:inherit;text-align:inherit;border-radius:3px}
+.tm:hover{text-decoration:underline;color:var(--blue-2)}
+.tm.my{color:var(--gold-deep)}
+.tm.my::before{content:"★ ";font-size:.85em}
+
+/* Phone list board */
+.slots{display:flex;flex-direction:column;gap:14px}
+.slot-h{font-family:var(--font-display);font-weight:400;font-size:22px;color:var(--blue);display:flex;align-items:center;gap:8px;padding:0 2px 6px;border-bottom:2px solid var(--gold);margin-bottom:8px}
+.slot-h .cnt{font-family:var(--font-body);font-size:12px;color:var(--muted);font-weight:500}
+.slot.now .slot-h{color:var(--red)}
+.slot-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px}
+.gl{background:var(--surface);border:1px solid var(--line);border-right:5px solid var(--c);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.gl .top-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.gl .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;font-weight:700;font-size:16px;line-height:1.25}
+.gl .teams .b{text-align:left}
+.gl .teams .vs{font-size:11px;color:var(--muted);font-weight:500;padding:1px 6px;border-radius:999px;background:var(--surface-2)}
+.gl .teams .sc{font-family:var(--font-display);font-weight:400;font-size:18px;color:var(--fg)}
+.gl .hs{font-size:12px;color:var(--muted)}
+
+/* Lists */
+.glist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column}
+.glist li{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.glist li:first-child{border-top:0}
+.glist .when{font-weight:700;line-height:1.1;font-family:var(--font-display);font-size:17px;color:var(--blue)}
+.glist .when small{display:block;color:var(--muted);font-weight:400;font-size:11.5px;white-space:nowrap;font-family:var(--font-body)}
+.glist .who{min-width:0}
+.glist .who .l{font-size:12px;color:var(--muted)}
+.glist .res{font-weight:700;white-space:nowrap}
+.glist .res.pending{color:var(--muted);font-weight:400;font-size:12px}
+.glist li.err .when{color:var(--danger)}
+.players{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.players li{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:3px 9px;font-size:14px}
+.players li.hit{background:var(--court-bg);border-color:var(--gold);color:var(--fg);font-weight:600}
+.stand{width:100%;font-size:14px;margin-top:10px}
+.stand th,.stand td{padding:5px 6px;position:static}
+.stand td.n{font-weight:700;width:22px;color:var(--muted)}
+.stand tr.q td{background:var(--ok-soft)}
+.teamline{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.card.mycard{border-color:var(--gold);box-shadow:0 0 0 2px var(--court-bg)}
+
+/* Buttons & forms */
+.btn{border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;min-height:38px;font-size:14px}
+.btn:hover{border-color:var(--fg)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#2a1d00}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.danger.arm{background:var(--danger);color:#fff}
+.btn.sm{padding:5px 10px;font-size:13px;min-height:32px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input[type=text],input[type=time],input[type=date],input[type=number],input[type=url],select,textarea{border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);padding:7px 9px;min-width:0;max-width:100%;font-size:16px}
+textarea{width:100%;min-height:96px;resize:vertical;line-height:1.5}
+input[type=number]{width:58px;text-align:center}
+input[type=time]{width:104px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+label.f>*{color:var(--fg)}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap}
+.adm td{padding:5px 6px;vertical-align:middle}
+.adm select{max-width:170px}
+.adm .ab{display:flex;flex-direction:column;gap:4px}
+.adm tr.err td:first-child{box-shadow:inset 3px 0 0 var(--danger)}
+.adm tr.warn td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+.issue{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.issue:first-child{border-top:0}
+.issue .lvl{font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--danger-soft);color:var(--danger);white-space:nowrap;margin-top:2px}
+.issue.warn .lvl{background:var(--warn-soft);color:var(--warn)}
+.issue .fix{font-size:12.5px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);line-height:1.5}
+.pubbar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:15;background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow)}
+.pubbar b{font-size:15px}
+.pubbar .btn{min-height:36px}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-start:50%;transform:translateX(50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;box-shadow:var(--shadow);z-index:50;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.spacer{flex:1}
+@media (max-width:640px){
+  .band-in{padding:12px 14px 10px;gap:10px}
+  .crest{width:50px;height:50px}.crest img{width:45px;height:45px}
+  .band-actions{display:none}
+  .board td{min-width:150px}
+  main{padding-block:10px 56px}
+  .slot-games{grid-template-columns:1fr}
+  .kpi{min-width:0;padding:6px 10px}.kpi b{font-size:18px}
+}
+@media (prefers-reduced-motion: reduce){ .toast{transition:none} }
+@media print{ .top,.filters,.toast,.pubbar,.band-actions{display:none} main{padding:0} .card{break-inside:avoid} }
+</style>
+
+<header class="band"><div class="band-in">
+  <div class="crest"><img id="logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QBARXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAA4KADAAQAAAABAAAA3wAAAAD/4QoJaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgcGhvdG9zaG9wOkluc3RydWN0aW9ucz0iRkJNRDAxMDAwYWMyMDMwMDAwMjcyOTAwMDBmMzU3MDAwMDVjNjIwMDAwMWM2YjAwMDAzOTkwMDAwMDFlYzAwMDAwZWNjYTAwMDBmOWQzMDAwMDc4ZGMwMDAwNjIyMzAxMDAiIHBob3Rvc2hvcDpUcmFuc21pc3Npb25SZWZlcmVuY2U9InFWRnBEbHNwd2NtNHlqb0M5S0d2Ii8+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPD94cGFja2V0IGVuZD0idyI/PgD/7QDIUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAI8cAVoAAxslRxwCAAAC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" alt="סמל הפועל גליל עליון" width="58" height="58"></div>
+  <div class="band-text">
+    <div class="eyebrow"><span>Hapoel Galil Elion</span><span class="he">הפועל גליל עליון · מחלקת הנוער</span></div>
+    <h1 id="brand-title">אליפות הגליל 3X3</h1>
+    <div class="meta" id="brand-meta"></div>
+  </div>
+  <div class="band-actions" id="band-actions"></div>
+</div></header>
+<div class="top"><div class="top-in"><nav class="tabs" role="tablist" id="tabs"></nav></div></div>
+<div class="mine" id="mine" hidden></div>
+<div class="filters" id="filters"></div>
+<main id="view"><div class="empty">טוען את לוח הטורניר…</div></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="application/json" id="tournament-data" data-github="MNT-TYPE/galil-3x3@main:docs/data.json">{"settings":{"name":"אליפות הגליל בכדורסל 3X3 לזכר הבנים","year":"2026","date":"","location":"","shareUrl":"https://mnt-type.github.io/galil-3x3/","courts":["דחר 1","דחר 2","משולב 1","משולב 2","פיס 1","פיס 2","פיס 3","פיס 4"],"categories":[{"id":"gd","name":"כיתות ג'-ד'","short":"ג'-ד'","order":1},{"id":"katsal","name":"קטסל (כיתות ה'-ו')","short":"ה'-ו'","order":2},{"id":"zh","name":"ילדים (כיתות ז'-ח')","short":"ז'-ח'","order":3},{"id":"yaldot","name":"ילדות","short":"ילדות","order":4},{"id":"nearot","name":"נערות","short":"נערות","order":5}]},"teams":{"g_rk1":{"name":"רמת כורזים 1","categoryId":"gd","players":["הראל חזן","זוהר וינר","גיא אפוטה","עדי כהן","היגלי תורג'מן"],"order":0},"g_rk2":{"name":"רמת כורזים 2","categoryId":"gd","players":["עמית עלי","ירדן חסיד","ברית סופר","יונתן שאול","אלון מייסטר"],"order":1},"g_go1":{"name":"הגושרים 1","categoryId":"gd","players":["אלה גבע","מעין לוי","ליאו נדב","מיתר אונא","יובל תבורי"],"order":2},"g_go2":{"name":"הגושרים 2","categoryId":"gd","players":["גילי ברעם","עלמה אנג'וני","שירה","זוהר"],"order":3},"g_am1":{"name":"עמיר 1","categoryId":"gd","players":[],"order":4},"g_am2":{"name":"עמיר 2","categoryId":"gd","players":["טל אפלטון","זיו דימר","שיר"],"order":5},"g_am3":{"name":"עמיר 3","categoryId":"gd","players":["איתי","יותם גל","ירדן","סהר"],"order":6},"g_da1":{"name":"דפנה 1","categoryId":"gd","players":["דור חבינשטיין","ניר חבינשטיין","אביה דונשיק","עידו מליאנקר"],"order":7},"g_da2":{"name":"דפנה 2","categoryId":"gd","players":["ראם שמואל","יהל אשכנזי","באר מועלם","איילה זרחן"],"order":8},"g_kn1":{"name":"כפר הנשיא 1","categoryId":"gd","players":["עיטם ג'רבי","אמתי נדם","יהל לדרמן","עילי חייט"],"order":9},"g_kn2":{"name":"כפר הנשיא 2","categoryId":"gd","players":["יונתן ליניאדו","סלע לינטון","עומר דיין","רז אלאני"],"order":10},"g_kb1":{"name":"כפר בלום 1","categoryId":"gd","players":["יואב שריד","אלון גרוס","עפרי זגורי","אביב אבין"],"order":11},"g_kb2":{"name":"כפר בלום 2","categoryId":"gd","players":["מתן בלמס","רוי עמר","גל מנחם","אביתר עצמון"],"order":12},"g_hu1":{"name":"חולתה 1","categoryId":"gd","players":["אליה עמר","יובל בידרמן","אור ליפינסקי","יואב חי","לני הלפרין"],"order":13},"g_hu2":{"name":"חולתה 2","categoryId":"gd","players":["שקד לב","באר","עידו","צור ניבר","אר קדוש"],"order":14},"g_hu3":{"name":"חולתה 3","categoryId":"gd","players":["עמית לב","יובל","איתמר","עומרי","ארז עזרא"],"order":15},"k_rk1":{"name":"רמת כורזים 1","categoryId":"katsal","players":["יותם לוי","איתמר לוי","הילל עומר","ינאי ברק דרעי"],"order":16},"k_rk2":{"name":"רמת כורזים 2","categoryId":"katsal","players":["אוריה בלייכר","הראל עלי","עלי סופר","אלעד פלד חדד"],"order":17},"k_hu1":{"name":"חולתה 1","categoryId":"katsal","players":["אלון ניר","סתיו שוורץ","עברי נידרמן","תומר אוחיון"],"order":18},"k_hu2":{"name":"חולתה 2","categoryId":"katsal","players":["יואב צליכובר","יונתן ששון","בועז צליכובר"],"order":19},"k_hu3":{"name":"חולתה 3","categoryId":"katsal","players":["גיא פיקן","סהר לברון","אלון ברנזון","נטע רוכמן"],"order":20},"k_hu4":{"name":"חולתה 4","categoryId":"katsal","players":["איתן חי","ניצן קציר","חותם אמשלום"],"order":21},"k_na1":{"name":"נאות 1","categoryId":"katsal","players":["נבו שלמוני","מעיין אופנהיים","ליאו גרסון","לביא ביר","ינאי סלומון"],"order":22},"k_na2":{"name":"נאות 2","categoryId":"katsal","players":["דרור יצחק","הראל","איתן","נועם"],"order":23},"k_go1":{"name":"הגושרים 1","categoryId":"katsal","players":["הראל אשכנזי","אריאל כהן","דורון בשירי","אכיל אבו סאלח"],"order":24},"k_go2":{"name":"הגושרים 2","categoryId":"katsal","players":["ריי פיגלסון","ירדן רויזמן","עמית רוזנבלום","מלאן שופאני"],"order":25},"k_ay1":{"name":"איילת השחר 1","categoryId":"katsal","players":["חם אביטול","יובל רבינו","מעיין מעתק"],"order":26},"k_ay2":{"name":"איילת השחר 2","categoryId":"katsal","players":["אסף פרץ","עוז ברקוביץ'","אריאל שטרקס"],"order":27},"k_kg1":{"name":"כפר גלעדי 1","categoryId":"katsal","players":["אלון בקרמן","מורן ביר","גיא פיין","איתמר גוטמן"],"order":28},"k_kg2":{"name":"כפר גלעדי 2","categoryId":"katsal","players":["עמית ברעם","תומר מוטעי","אמרי קדוש","הראל וינברג"],"order":29},"k_kg3":{"name":"כפר גלעדי 3","categoryId":"katsal","players":["אלון שנער","עמית לונטל","גיא כהן","יואב"],"order":30},"k_kba1":{"name":"כפר בלום א' 1","categoryId":"katsal","players":["מיכאל פיאטקה","מעיין יצחק","רותם רוח"],"order":31},"k_kba2":{"name":"כפר בלום א' 2","categoryId":"katsal","players":["נטע דונשיק","אושרי","יהונתן שמואל","אורי"],"order":32},"k_kba3":{"name":"כפר בלום א' 3","categoryId":"katsal","players":["יהלי ברקוביץ'","ארבל דחר","אסף מרגלית"],"order":33},"k_kbb1":{"name":"כפר בלום ב' 1","categoryId":"katsal","players":["ענבר זוגרי","יונתן אבין","עומר אליאב","איתמר מרגלית","אורי שור"],"order":34},"z_a1":{"name":"ילדים א1","categoryId":"zh","players":["יאיר פתחה","רועי טייב","שי מולר","אופיר נחשונוב"],"order":35},"z_a2":{"name":"ילדים א2","categoryId":"zh","players":["אורי חמנו","שי רייכבך","רעי סופר","אורי כהן"],"order":36},"z_a3":{"name":"ילדים א3","categoryId":"zh","players":["אוריה מויאל","נדב תבורי","יהל ויינברגר"],"order":37},"z_a4":{"name":"ילדים א4","categoryId":"zh","players":["דולב ארד","נבו שדה","עמית אבידור","אלדר טקיאר"],"order":38},"z_a5":{"name":"ילדים א5","categoryId":"zh","players":["אורי עמר","קורן אורי","אסף נדל","מיכאל בכרך"],"order":39},"z_a6":{"name":"ילדים א6","categoryId":"zh","players":["דוד זעפרני","עמית מייסטר","מעיין מרק","אמרי סבג"],"order":40},"z_a7":{"name":"ילדים א7","categoryId":"zh","players":["יהלי בן דוד","עברי בירנבויים","אורי פאפוריש","אמית ורון"],"order":41},"z_emek":{"name":"ילדים העמק","categoryId":"zh","players":["יפתח קרת","גידי יניב","אביב פאי","ישי אלוני"],"order":42},"z_b1":{"name":"ילדים ב'1","categoryId":"zh","players":["נעם שוורץ","מורן סלע","גלעד מולר","אילאי יעקובי"],"order":43},"z_b2":{"name":"ילדים ב'2","categoryId":"zh","players":["אורי עתרה","יהלי טלטש","תמר לוי","מאי אשל"],"order":44},"z_b3":{"name":"ילדים ב'3","categoryId":"zh","players":["עומרי רז","תלם גולזמן","יואב פרץ","שחר גולזמן"],"order":45},"z_nearim":{"name":"נערים","categoryId":"zh","players":["עודד לוי","עומר בלמס","רני הלפרין","הגייה עמאשה"],"order":46},"y_1":{"name":"ילדות 1","categoryId":"yaldot","players":["ניב","גוני","מישל","נעמי ס"],"order":47},"y_2":{"name":"ילדות 2","categoryId":"yaldot","players":["עדן","סאשה","גפן","גיא"],"order":48},"y_3":{"name":"ילדות 3","categoryId":"yaldot","players":["נעמי ז","ליהי","קורל"],"order":49},"n_1":{"name":"נערות 1","categoryId":"nearot","players":["קים קוממי","אורי אטיאס","נעמי קור","בראשית הררי"],"order":50},"n_2":{"name":"נערות 2","categoryId":"nearot","players":["גיא מדינה","תמרה מור","לירון בר ניסן"],"order":51},"n_3":{"name":"נערות 3","categoryId":"nearot","players":["גל ברתנא","זיו שם טוב","מאיה לוונטל"],"order":52},"n_4":{"name":"נערות 4","categoryId":"nearot","players":["נעם עילם","מעיין אשנר","אריאל ס"],"order":53}},"houses":{"hg_a":{"name":"בית א'","categoryId":"gd","teamIds":["g_da1","g_go1","g_rk1","g_kn2"],"order":0},"hg_b":{"name":"בית ב'","categoryId":"gd","teamIds":["g_rk2","g_kb1","g_hu1","g_hu3"],"order":1},"hg_c":{"name":"בית ג'","categoryId":"gd","teamIds":["g_da2","g_kn1","g_kb2","g_hu2"],"order":2},"hg_d":{"name":"בית ד'","categoryId":"gd","teamIds":["g_am1","g_am2","g_am3","g_go2"],"order":3},"hk_a":{"name":"בית א'","categoryId":"katsal","teamIds":["k_rk1","k_hu4","k_kg3","k_kba2"],"order":4},"hk_b":{"name":"בית ב'","categoryId":"katsal","teamIds":["k_rk2","k_na1","k_kg2","k_kba1"],"order":5},"hk_c":{"name":"בית ג'","categoryId":"katsal","teamIds":["k_hu1","k_na2","k_kg1","k_kba3"],"order":6},"hk_d":{"name":"בית ד'","categoryId":"katsal","teamIds":["k_hu2","k_go1","k_ay1","k_kbb1"],"order":7},"hk_e":{"name":"בית ה'","categoryId":"katsal","teamIds":["k_hu3","k_go2","k_ay2"],"order":8},"hz_a":{"name":"בית א'","categoryId":"zh","teamIds":["z_a1","z_a5","z_a7","z_b2"],"order":9},"hz_b":{"name":"בית ב'","categoryId":"zh","teamIds":["z_a2","z_a6","z_emek","z_b3"],"order":10},"hz_c":{"name":"בית ג'","categoryId":"zh","teamIds":["z_a3","z_a4","z_b1","z_nearim"],"order":11},"hy_1":{"name":"ליגה","categoryId":"yaldot","teamIds":["y_1","y_2","y_3"],"order":12},"hn_1":{"name":"ליגה","categoryId":"nearot","teamIds":["n_1","n_2","n_3","n_4"],"order":13}},"games":{"g001":{"categoryId":"gd","houseId":"hg_a","stage":"house","time":"09:00","court":"פיס 1","teamA":"g_da1","teamB":"g_go1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":1},"g002":{"categoryId":"gd","houseId":"hg_a","stage":"house","time":"09:15","court":"פיס 1","teamA":"g_rk1","teamB":"g_kn2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":2},"g003":{"categoryId":"gd","houseId":"hg_a","stage":"house","time":"09:30","court":"פיס 1","teamA":"g_da1","teamB":"g_rk1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":3},"g004":{"categoryId":"gd","houseId":"hg_a","stage":"house","time":"09:40","court":"פיס 1","teamA":"g_go1","teamB":"g_kn2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":4},"g005":{"categoryId":"gd","houseId":"hg_a","stage":"house","time":"09:50","court":"פיס 1","teamA":"g_da1","teamB":"g_kn2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":5},"g006":{"categoryId":"gd","houseId":"hg_a","stage":"house","time":"10:00","court":"פיס 1","teamA":"g_go1","teamB":"g_rk1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":6},"g007":{"categoryId":"gd","houseId":"hg_b","stage":"house","time":"08:40","court":"פיס 2","teamA":"g_rk2","teamB":"g_kb1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":7},"g008":{"categoryId":"gd","houseId":"hg_b","stage":"house","time":"09:00","court":"פיס 2","teamA":"g_hu1","teamB":"g_hu3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":8},"g009":{"categoryId":"gd","houseId":"hg_b","stage":"house","time":"09:15","court":"פיס 2","teamA":"g_rk2","teamB":"g_hu1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":9},"g010":{"categoryId":"gd","houseId":"hg_b","stage":"house","time":"09:30","court":"פיס 2","teamA":"g_kb1","teamB":"g_hu3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":10},"g011":{"categoryId":"gd","houseId":"hg_b","stage":"house","time":"09:40","court":"פיס 2","teamA":"g_rk2","teamB":"g_hu3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":11},"g012":{"categoryId":"gd","houseId":"hg_b","stage":"house","time":"09:50","court":"פיס 2","teamA":"g_kb1","teamB":"g_hu1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":12},"g013":{"categoryId":"gd","houseId":"hg_c","stage":"house","time":"08:40","court":"פיס 3","teamA":"g_da2","teamB":"g_kn1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":13},"g014":{"categoryId":"gd","houseId":"hg_c","stage":"house","time":"08:50","court":"פיס 3","teamA":"g_hu2","teamB":"g_kb2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":14},"g015":{"categoryId":"gd","houseId":"hg_c","stage":"house","time":"09:15","court":"פיס 3","teamA":"g_da2","teamB":"g_kb2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":15},"g016":{"categoryId":"gd","houseId":"hg_c","stage":"house","time":"09:30","court":"פיס 3","teamA":"g_kn1","teamB":"g_hu2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":16},"g017":{"categoryId":"gd","houseId":"hg_c","stage":"house","time":"09:40","court":"פיס 3","teamA":"g_da2","teamB":"g_hu2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":17},"g018":{"categoryId":"gd","houseId":"hg_c","stage":"house","time":"09:50","court":"פיס 3","teamA":"g_kn1","teamB":"g_kb2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":18},"g019":{"categoryId":"gd","houseId":"hg_d","stage":"house","time":"08:40","court":"פיס 4","teamA":"g_am1","teamB":"g_am2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":19},"g020":{"categoryId":"gd","houseId":"hg_d","stage":"house","time":"08:50","court":"פיס 4","teamA":"g_am3","teamB":"g_go2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":20},"g021":{"categoryId":"gd","houseId":"hg_d","stage":"house","time":"09:00","court":"פיס 4","teamA":"g_am1","teamB":"g_am3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":21},"g022":{"categoryId":"gd","houseId":"hg_d","stage":"house","time":"09:30","court":"פיס 4","teamA":"g_am2","teamB":"g_go2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":22},"g023":{"categoryId":"gd","houseId":"hg_d","stage":"house","time":"09:40","court":"פיס 4","teamA":"g_am1","teamB":"g_go2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":23},"g024":{"categoryId":"gd","houseId":"hg_d","stage":"house","time":"09:50","court":"פיס 4","teamA":"g_am2","teamB":"g_am3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":24},"g025":{"categoryId":"katsal","houseId":"hk_a","stage":"house","time":"08:40","court":"דחר 1","teamA":"k_rk1","teamB":"k_hu4","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":25},"g026":{"categoryId":"katsal","houseId":"hk_a","stage":"house","time":"08:50","court":"דחר 1","teamA":"k_kg3","teamB":"k_kba2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":26},"g027":{"categoryId":"katsal","houseId":"hk_a","stage":"house","time":"09:00","court":"דחר 1","teamA":"k_rk1","teamB":"k_kg3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":27},"g028":{"categoryId":"katsal","houseId":"hk_a","stage":"house","time":"09:15","court":"דחר 1","teamA":"k_hu4","teamB":"k_kba2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":28},"g029":{"categoryId":"katsal","houseId":"hk_a","stage":"house","time":"09:40","court":"דחר 1","teamA":"k_rk1","teamB":"k_kba2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":29},"g030":{"categoryId":"katsal","houseId":"hk_a","stage":"house","time":"09:50","court":"דחר 1","teamA":"k_hu4","teamB":"k_kg3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":30},"g031":{"categoryId":"katsal","houseId":"hk_b","stage":"house","time":"08:40","court":"דחר 2","teamA":"k_rk2","teamB":"k_na1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":31},"g032":{"categoryId":"katsal","houseId":"hk_b","stage":"house","time":"08:50","court":"דחר 2","teamA":"k_kg2","teamB":"k_kba1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":32},"g033":{"categoryId":"katsal","houseId":"hk_b","stage":"house","time":"09:00","court":"דחר 2","teamA":"k_rk2","teamB":"k_kg2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":33},"g034":{"categoryId":"katsal","houseId":"hk_b","stage":"house","time":"09:15","court":"דחר 2","teamA":"k_na1","teamB":"k_kba1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":34},"g035":{"categoryId":"katsal","houseId":"hk_b","stage":"house","time":"09:30","court":"דחר 2","teamA":"k_rk2","teamB":"k_kba1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":35},"g036":{"categoryId":"katsal","houseId":"hk_b","stage":"house","time":"09:50","court":"דחר 2","teamA":"k_na1","teamB":"k_kg2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":36},"g037":{"categoryId":"katsal","houseId":"hk_c","stage":"house","time":"08:40","court":"משולב 1","teamA":"k_hu1","teamB":"k_na2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":37},"g038":{"categoryId":"katsal","houseId":"hk_c","stage":"house","time":"08:50","court":"משולב 1","teamA":"k_kg1","teamB":"k_kba3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":38},"g039":{"categoryId":"katsal","houseId":"hk_c","stage":"house","time":"09:00","court":"משולב 1","teamA":"k_hu1","teamB":"k_kg1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":39},"g040":{"categoryId":"katsal","houseId":"hk_c","stage":"house","time":"09:15","court":"משולב 1","teamA":"k_na2","teamB":"k_kba3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":40},"g041":{"categoryId":"katsal","houseId":"hk_c","stage":"house","time":"09:30","court":"משולב 1","teamA":"k_hu1","teamB":"k_kba3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":41},"g042":{"categoryId":"katsal","houseId":"hk_c","stage":"house","time":"09:40","court":"משולב 1","teamA":"k_na2","teamB":"k_kg1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":42},"g043":{"categoryId":"katsal","houseId":"hk_d","stage":"house","time":"08:40","court":"משולב 2","teamA":"k_hu2","teamB":"k_go1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":43},"g044":{"categoryId":"katsal","houseId":"hk_d","stage":"house","time":"08:50","court":"משולב 2","teamA":"k_ay1","teamB":"k_kbb1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":44},"g045":{"categoryId":"katsal","houseId":"hk_d","stage":"house","time":"09:00","court":"משולב 2","teamA":"k_hu2","teamB":"k_ay1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":45},"g046":{"categoryId":"katsal","houseId":"hk_d","stage":"house","time":"09:15","court":"משולב 2","teamA":"k_go1","teamB":"k_kbb1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":46},"g047":{"categoryId":"katsal","houseId":"hk_d","stage":"house","time":"09:30","court":"משולב 2","teamA":"k_hu2","teamB":"k_kbb1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":47},"g048":{"categoryId":"katsal","houseId":"hk_d","stage":"house","time":"09:40","court":"משולב 2","teamA":"k_go1","teamB":"k_ay1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":48},"g049":{"categoryId":"katsal","houseId":"hk_e","stage":"house","time":"08:40","court":"פיס 1","teamA":"k_hu3","teamB":"k_go2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":49},"g050":{"categoryId":"katsal","houseId":"hk_e","stage":"house","time":"08:50","court":"פיס 2","teamA":"k_hu3","teamB":"k_ay2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":50},"g051":{"categoryId":"katsal","houseId":"hk_e","stage":"house","time":"09:00","court":"פיס 3","teamA":"k_go2","teamB":"k_ay2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":51},"g052":{"categoryId":"katsal","houseId":"hk_e","stage":"house","time":"09:15","court":"פיס 4","teamA":"k_hu3","teamB":"k_go2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":52},"g053":{"categoryId":"katsal","houseId":"hk_e","stage":"house","time":"09:30","court":"דחר 1","teamA":"k_hu3","teamB":"k_ay2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":53},"g054":{"categoryId":"katsal","houseId":"hk_e","stage":"house","time":"09:40","court":"דחר 2","teamA":"k_go2","teamB":"k_ay2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":54},"g055":{"categoryId":"zh","houseId":"hz_a","stage":"house","time":"11:10","court":"דחר 1","teamA":"z_a1","teamB":"z_a5","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":55},"g056":{"categoryId":"zh","houseId":"hz_a","stage":"house","time":"11:20","court":"דחר 1","teamA":"z_a7","teamB":"z_b2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":56},"g057":{"categoryId":"zh","houseId":"hz_a","stage":"house","time":"11:30","court":"דחר 1","teamA":"z_a1","teamB":"z_a7","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":57},"g058":{"categoryId":"zh","houseId":"hz_a","stage":"house","time":"11:45","court":"דחר 2","teamA":"z_a5","teamB":"z_b2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":58},"g059":{"categoryId":"zh","houseId":"hz_a","stage":"house","time":"12:00","court":"משולב 1","teamA":"z_a1","teamB":"z_b2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":59},"g060":{"categoryId":"zh","houseId":"hz_a","stage":"house","time":"12:15","court":"משולב 1","teamA":"z_a5","teamB":"z_a7","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":60},"g061":{"categoryId":"zh","houseId":"hz_b","stage":"house","time":"11:10","court":"דחר 2","teamA":"z_a2","teamB":"z_a6","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":61},"g062":{"categoryId":"zh","houseId":"hz_b","stage":"house","time":"11:20","court":"דחר 2","teamA":"z_emek","teamB":"z_b3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":62},"g063":{"categoryId":"zh","houseId":"hz_b","stage":"house","time":"11:30","court":"משולב 1","teamA":"z_a2","teamB":"z_emek","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":63},"g064":{"categoryId":"zh","houseId":"hz_b","stage":"house","time":"11:45","court":"משולב 1","teamA":"z_a6","teamB":"z_b3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":64},"g065":{"categoryId":"zh","houseId":"hz_b","stage":"house","time":"12:00","court":"דחר 1","teamA":"z_a2","teamB":"z_b3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":65},"g066":{"categoryId":"zh","houseId":"hz_b","stage":"house","time":"12:15","court":"דחר 1","teamA":"z_a6","teamB":"z_emek","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":66},"g067":{"categoryId":"zh","houseId":"hz_c","stage":"house","time":"11:10","court":"משולב 1","teamA":"z_a3","teamB":"z_a4","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":67},"g068":{"categoryId":"zh","houseId":"hz_c","stage":"house","time":"11:20","court":"משולב 1","teamA":"z_b1","teamB":"z_nearim","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":68},"g069":{"categoryId":"zh","houseId":"hz_c","stage":"house","time":"11:30","court":"דחר 1","teamA":"z_a3","teamB":"z_b1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":69},"g070":{"categoryId":"zh","houseId":"hz_c","stage":"house","time":"11:45","court":"דחר 1","teamA":"z_a4","teamB":"z_nearim","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":70},"g071":{"categoryId":"zh","houseId":"hz_c","stage":"house","time":"12:00","court":"דחר 2","teamA":"z_a3","teamB":"z_nearim","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":71},"g072":{"categoryId":"zh","houseId":"hz_c","stage":"house","time":"12:15","court":"דחר 2","teamA":"z_a4","teamB":"z_b1","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":72},"g073":{"categoryId":"yaldot","houseId":"hy_1","stage":"house","time":"11:10","court":"פיס 4","teamA":"y_1","teamB":"y_2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":73},"g074":{"categoryId":"yaldot","houseId":"hy_1","stage":"house","time":"11:20","court":"פיס 4","teamA":"y_3","teamB":"y_2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":74},"g075":{"categoryId":"yaldot","houseId":"hy_1","stage":"house","time":"11:30","court":"פיס 4","teamA":"y_1","teamB":"y_3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":75},"g076":{"categoryId":"yaldot","houseId":"hy_1","stage":"house","time":"11:45","court":"פיס 4","teamA":"y_1","teamB":"y_2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":76},"g077":{"categoryId":"yaldot","houseId":"hy_1","stage":"house","time":"12:00","court":"פיס 4","teamA":"y_1","teamB":"y_3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":77},"g078":{"categoryId":"yaldot","houseId":"hy_1","stage":"house","time":"12:15","court":"פיס 4","teamA":"y_3","teamB":"y_2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":78},"g079":{"categoryId":"nearot","houseId":"hn_1","stage":"house","time":"11:10","court":"פיס 3","teamA":"n_1","teamB":"n_2","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":79},"g080":{"categoryId":"nearot","houseId":"hn_1","stage":"house","time":"11:20","court":"פיס 3","teamA":"n_3","teamB":"n_4","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":80},"g081":{"categoryId":"nearot","houseId":"hn_1","stage":"house","time":"11:30","court":"פיס 3","teamA":"n_1","teamB":"n_3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":81},"g082":{"categoryId":"nearot","houseId":"hn_1","stage":"house","time":"11:45","court":"פיס 3","teamA":"n_2","teamB":"n_4","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":82},"g083":{"categoryId":"nearot","houseId":"hn_1","stage":"house","time":"12:00","court":"פיס 3","teamA":"n_1","teamB":"n_4","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":83},"g084":{"categoryId":"nearot","houseId":"hn_1","stage":"house","time":"12:15","court":"פיס 3","teamA":"n_2","teamB":"n_3","labelA":"","labelB":"","scoreA":null,"scoreB":null,"order":84},"g085":{"categoryId":"katsal","houseId":"","stage":"quarter","time":"09:50","court":"משולב 1","teamA":"","teamB":"","labelA":"מקום 1 בית ה'","labelB":"מקום 1 בית ד'","scoreA":null,"scoreB":null,"order":85},"g086":{"categoryId":"katsal","houseId":"","stage":"semi","time":"10:00","court":"דחר 1","teamA":"","teamB":"","labelA":"מקום 1 בית א'","labelB":"מקום 1 בית ב'","scoreA":null,"scoreB":null,"order":86},"g087":{"categoryId":"katsal","houseId":"","stage":"semi","time":"10:00","court":"דחר 2","teamA":"","teamB":"","labelA":"מקום 1 בית ג'","labelB":"מנצחת רבע הגמר","scoreA":null,"scoreB":null,"order":87},"g088":{"categoryId":"katsal","houseId":"","stage":"third","time":"10:15","court":"דחר 1","teamA":"","teamB":"","labelA":"מפסידת חצי גמר 1","labelB":"מפסידת חצי גמר 2","scoreA":null,"scoreB":null,"order":88},"g089":{"categoryId":"katsal","houseId":"","stage":"final","time":"10:15","court":"דחר 1","teamA":"","teamB":"","labelA":"מנצחת חצי גמר 1","labelB":"מנצחת חצי גמר 2","scoreA":null,"scoreB":null,"order":89},"g090":{"categoryId":"zh","houseId":"","stage":"semi","time":"12:30","court":"דחר 1","teamA":"","teamB":"","labelA":"מקום 1 בית א'","labelB":"מקום 1 בית ג'","scoreA":null,"scoreB":null,"order":90},"g091":{"categoryId":"zh","houseId":"","stage":"semi","time":"12:30","court":"דחר 2","teamA":"","teamB":"","labelA":"מקום 1 בית ב'","labelB":"מקום 2 בית ג'","scoreA":null,"scoreB":null,"order":91},"g092":{"categoryId":"zh","houseId":"","stage":"third","time":"12:45","court":"דחר 2","teamA":"","teamB":"","labelA":"מפסידת חצי גמר 1","labelB":"מפסידת חצי גמר 2","scoreA":null,"scoreB":null,"order":92},"g093":{"categoryId":"zh","houseId":"","stage":"final","time":"12:45","court":"דחר 1","teamA":"","teamB":"","labelA":"מנצחת חצי גמר 1","labelB":"מנצחת חצי גמר 2","scoreA":null,"scoreB":null,"order":93},"g094":{"categoryId":"yaldot","houseId":"","stage":"final","time":"12:30","court":"פיס 4","teamA":"","teamB":"","labelA":"מקום 1","labelB":"מקום 2","scoreA":null,"scoreB":null,"order":94},"g095":{"categoryId":"nearot","houseId":"","stage":"final","time":"12:30","court":"פיס 3","teamA":"","teamB":"","labelA":"מקום 1","labelB":"מקום 2","scoreA":null,"scoreB":null,"order":95}}}</script>
+<script>
+(function(){
+'use strict';
+document.documentElement.setAttribute('dir','rtl');
+document.documentElement.setAttribute('lang','he');
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=p=>p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const STAGES={house:'משחק בית',quarter:'רבע גמר',semi:'חצי גמר',third:'מקומות 3-4',final:'גמר',other:'אחר'};
+const TABS=[['board','לוח זמנים','לוח'],['houses','בתים ותוצאות','בתים'],['teams','קבוצות ושחקנים','קבוצות'],['courts','מגרשים','מגרשים'],['admin','ניהול','ניהול']];
+let toastT; function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms||2800);}
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}};
+const lsSet=(k,v)=>{try{if(v===undefined)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+
+/* ---------- state ---------- */
+function defaultSettings(){return {name:'אליפות הגליל בכדורסל 3X3 לזכר הבנים',year:'',date:'',location:'',shareUrl:'',courts:[],categories:[]};}
+const S={settings:defaultSettings(),teams:{},houses:{},games:{},loaded:false,canWrite:false,backend:'local',publishing:false};
+let BASE=null; // the data embedded in the published page
+const ui=Object.assign({tab:'board',cat:'',q:'',adminTab:'games',adminCat:'',myTeam:'',onlyMine:false,boardMode:'auto'},lsGet('g3x3.ui',{}));
+const h0=location.hash.replace('#',''); if(TABS.some(t=>t[0]===h0)) ui.tab=h0;
+function saveUi(){lsSet('g3x3.ui',ui);}
+
+const cats=()=>[...(S.settings.categories||[])].sort((a,b)=>(a.order??0)-(b.order??0));
+const catById=id=>cats().find(c=>c.id===id);
+const catClass=id=>{const i=cats().findIndex(c=>c.id===id);return i<0?'c0':'c'+((i%5)+1);};
+const catChip=id=>{const c=catById(id);return c?`<span class="cat ${catClass(id)}">${esc(c.short||c.name)}</span>`:'';};
+const byOrderName=(a,b)=>((a.order??0)-(b.order??0))||String(a.name).localeCompare(String(b.name),'he');
+const list=coll=>Object.entries(S[coll]).map(([id,v])=>Object.assign({id},v));
+const teamsOf=cid=>list('teams').filter(t=>!cid||t.categoryId===cid).sort(byOrderName);
+const housesOf=cid=>list('houses').filter(x=>!cid||x.categoryId===cid).sort(byOrderName);
+const courtIdx=c=>{const i=(S.settings.courts||[]).indexOf(c);return i<0?999:i;};
+const gameSort=(a,b)=>String(a.time||'').localeCompare(String(b.time||''))||(courtIdx(a.court)-courtIdx(b.court))||((a.order??0)-(b.order??0));
+const gamesWhere=pred=>list('games').filter(pred||(()=>true)).sort(gameSort);
+const teamName=id=>S.teams[id]?S.teams[id].name:'';
+const sideName=(g,s)=>g['team'+s]?(teamName(g['team'+s])||'(קבוצה שנמחקה)'):(g['label'+s]||'—');
+const houseOfTeam=tid=>list('houses').find(x=>(x.teamIds||[]).includes(tid));
+const hasScore=g=>g.scoreA!=null&&g.scoreB!=null&&g.scoreA!==''&&g.scoreB!=='';
+const scoreTxt=g=>hasScore(g)?`<span class="num">${esc(g.scoreA)}:${esc(g.scoreB)}</span>`:'';
+const allCourts=()=>{const c=[...(S.settings.courts||[])];list('games').forEach(g=>{if(g.court&&!c.includes(g.court))c.push(g.court);});return c;};
+const isMine=id=>!!id&&id===ui.myTeam;
+function teamBtn(id,label){return `<button type="button" class="tm ${isMine(id)?'my':''}" data-team="${esc(id)}">${esc(label||teamName(id))}</button>`;}
+function side(g,s){return g['team'+s]?teamBtn(g['team'+s],sideName(g,s)):esc(sideName(g,s));}
+const visible=g=>(!ui.cat||g.categoryId===ui.cat)&&(!ui.onlyMine||!ui.myTeam||g.teamA===ui.myTeam||g.teamB===ui.myTeam);
+
+/* ---------- standings ---------- */
+function standings(house){
+  const rows={};(house.teamIds||[]).forEach(id=>{rows[id]={id,p:0,w:0,l:0,pf:0,pa:0};});
+  gamesWhere(g=>g.houseId===house.id&&hasScore(g)&&g.teamA&&g.teamB).forEach(g=>{
+    const a=rows[g.teamA],b=rows[g.teamB];if(!a||!b)return;const sa=+g.scoreA,sb=+g.scoreB;
+    a.p++;b.p++;a.pf+=sa;a.pa+=sb;b.pf+=sb;b.pa+=sa;if(sa>sb){a.w++;b.l++;}else if(sb>sa){b.w++;a.l++;}
+  });
+  return Object.values(rows).sort((a,b)=>(b.w-a.w)||((b.pf-b.pa)-(a.pf-a.pa))||(b.pf-a.pf)||teamName(a.id).localeCompare(teamName(b.id),'he'));
+}
+
+/* ---------- conflicts ---------- */
+function findConflicts(){
+  const out=[],games=gamesWhere();
+  const push=(lvl,msg,ids,fix)=>out.push({lvl,msg,ids,fix});
+  const byTC={};games.forEach(g=>{if(!g.time||!g.court)return;const k=g.time+'|'+g.court;(byTC[k]=byTC[k]||[]).push(g);});
+  Object.values(byTC).forEach(gs=>{if(gs.length>1)push('err',`${gs[0].time} · ${gs[0].court}: ${gs.length} משחקים באותו מגרש ובאותה שעה (${gs.map(g=>sideName(g,'A')+' – '+sideName(g,'B')).join(' | ')})`,gs.map(g=>g.id),'העבירו אחד מהמשחקים למגרש או לשעה אחרים.');});
+  const byTT={};games.forEach(g=>{['A','B'].forEach(s=>{const t=g['team'+s];if(t&&g.time){const k=g.time+'|'+t;(byTT[k]=byTT[k]||[]).push(g);}});});
+  Object.entries(byTT).forEach(([k,gs])=>{if(gs.length>1){const t=k.split('|')[1];push('err',`${gs[0].time}: ${teamName(t)} משובצת ל-${gs.length} משחקים באותה שעה`,gs.map(g=>g.id),'קבוצה יכולה לשחק משחק אחד בכל משבצת זמן.');}});
+  games.forEach(g=>{
+    if(g.teamA&&g.teamA===g.teamB)push('err',`${g.time||''} ${g.court||''}: ${teamName(g.teamA)} משובצת נגד עצמה`,[g.id],'בחרו יריבה אחרת.');
+    if(!g.time||!g.court)push('warn',`משחק ${sideName(g,'A')} – ${sideName(g,'B')} ללא ${!g.time?'שעה':''}${!g.time&&!g.court?' ו':''}${!g.court?'מגרש':''}`,[g.id],'השלימו שעה ומגרש כדי שהמשחק יופיע בלוח.');
+    ['A','B'].forEach(s=>{const t=g['team'+s];if(!t)return;const tm=S.teams[t];
+      if(!tm){push('warn',`${g.time||''} ${g.court||''}: משחק מצביע על קבוצה שנמחקה`,[g.id],'בחרו קבוצה קיימת או טקסט חופשי.');return;}
+      if(tm.categoryId!==g.categoryId)push('warn',`${g.time||''} ${g.court||''}: ${tm.name} שייכת לקטגוריה אחרת מזו של המשחק`,[g.id],'תקנו את קטגוריית המשחק או את הקבוצה.');
+      if(g.stage==='house'&&g.houseId){const hs=S.houses[g.houseId];if(hs&&!(hs.teamIds||[]).includes(t))push('warn',`${g.time||''} ${g.court||''}: ${tm.name} משחקת ב${hs.name} אך אינה חברה בו`,[g.id],'הוסיפו את הקבוצה לבית או שנו את שיוך המשחק.');}
+    });
+  });
+  housesOf().forEach(hs=>{const ids=hs.teamIds||[];for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){const a=ids[i],b=ids[j];
+    const n=games.filter(g=>g.houseId===hs.id&&((g.teamA===a&&g.teamB===b)||(g.teamA===b&&g.teamB===a))).length;
+    if(n===0)push('warn',`${catById(hs.categoryId)?.short||''} ${hs.name}: חסר משחק ${teamName(a)} – ${teamName(b)}`,[],'בכל בית כל זוג קבוצות אמור להיפגש לפחות פעם אחת.');}});
+  return out;
+}
+
+/* ---------- data: embedded page data + local draft + self-publish ---------- */
+const store={
+  artifact:null,downloads:null,
+  snapshot(){return {settings:S.settings,teams:S.teams,houses:S.houses,games:S.games};},
+  load(d){Object.assign(S,{settings:Object.assign(defaultSettings(),d.settings||{}),teams:d.teams||{},houses:d.houses||{},games:d.games||{}});},
+  async init(){
+    const tag=$('#tournament-data');
+    let embedded=null;try{const raw=tag.textContent.trim();if(raw)embedded=JSON.parse(raw);}catch(e){console.error('bad embedded data',e);}
+    const cl=window.claude;
+    if(tag.dataset.github){ // management page on GitHub Pages: edits are saved to the repository
+      S.backend='github';S.canWrite=true;gh.configure(tag.dataset.github);
+      const remote=await gh.loadLatest();if(remote)embedded=remote;
+    }else if(tag.hasAttribute('data-public')){ // parents' page: view-only, refreshed from data.json
+      S.backend='public';S.canWrite=false;
+      const remote=await fetchJson('data.json');if(remote)embedded=remote;
+      liveRefresh.start();
+    }else if(cl&&typeof cl.use==='function'){
+      S.backend='artifact';
+      const [art,usr]=await Promise.all([cl.use('artifact').catch(()=>null),cl.use('user').catch(()=>null)]);
+      this.artifact=art;cl.use('downloads').then(d=>{this.downloads=d;}).catch(()=>{});
+      let can=false;try{if(art&&usr)can=!!(await usr.canEdit());}catch(e){}
+      S.canWrite=can;
+    }else{S.backend='local';S.canWrite=true;
+      if(!embedded)embedded=await fetchJson('seed.json');
+    }
+    this.load(embedded||{});BASE=clone(this.snapshot()); // normalized shape, so draft comparison is exact
+    const draft=S.canWrite?lsGet('g3x3.draft',null):null;
+    if(draft&&draft.data&&JSON.stringify(draft.data)!==JSON.stringify(BASE)){this.load(draft.data);S.hasDraft=true;}
+    else{this.load(BASE);lsSet('g3x3.draft',undefined);}
+    S.loaded=true;render();
+  },
+  persist(){if(!S.canWrite)return;const dirty=this.dirtyCount()>0;lsSet('g3x3.draft',dirty?{at:Date.now(),data:this.snapshot()}:undefined);S.hasDraft=dirty;},
+  dirtyCount(){if(!BASE)return 0;let n=0;if(JSON.stringify(S.settings)!==JSON.stringify(BASE.settings))n++;
+    ['teams','houses','games'].forEach(c=>{const a=S[c],b=BASE[c]||{};new Set([...Object.keys(a),...Object.keys(b)]).forEach(id=>{if(JSON.stringify(a[id])!==JSON.stringify(b[id]))n++;});});return n;},
+  discard(){this.load(clone(BASE));lsSet('g3x3.draft',undefined);S.hasDraft=false;render();toast('השינויים בוטלו');},
+  async publish(){
+    if(S.backend==='github')return gh.publish();
+    if(!this.artifact){toast('פרסום אפשרי רק מתוך הדף המפורסם. כאן אפשר לייצא JSON.');return;}
+    if(S.publishing)return;S.publishing=true;render();
+    const LT='<';
+    try{
+      let src='';for(const u of [location.pathname+location.search,'index.html']){try{const r=await fetch(u,{cache:'no-store'});if(r.ok){src=await r.text();if(/id="tournament-data"/.test(src))break;}}catch(e){}}
+      if(!new RegExp('^\\s*'+LT+'!doctype html>','i').test(src)||!/id="tournament-data"/.test(src))throw {code:'template',message:'no template'};
+      const json=JSON.stringify(this.snapshot()).replace(new RegExp(LT+'\\/(script)','gi'),LT+'\\/$1').replace(new RegExp(LT+'!--','g'),LT+'\\!--');
+      const blockRe=new RegExp('('+LT+'script type="application\\/json" id="tournament-data">)[\\s\\S]*?('+LT+'\\/script>)');
+      const html=src.replace(blockRe,(m,a,b)=>a+json+b);
+      lsSet('g3x3.draft',{at:Date.now(),data:this.snapshot()}); // survives the reload; cleared on next load when it equals the page
+      await this.artifact.publish(html);
+      toast('פורסם! הדף נטען מחדש…');
+    }catch(e){console.error(e);S.publishing=false;
+      const c=e&&e.code;
+      if(c==='conflict')toast('מישהו פרסם גרסה חדשה בינתיים. הדף ייטען מחדש והשינויים שלכם נשמרו כטיוטה.');
+      else if(c==='not_writer'||c==='not_granted'){S.canWrite=false;toast('אין לכם הרשאת פרסום בדף הזה');}
+      else if(c==='rate_limited')toast('יותר מדי פרסומים ברצף. חכו רגע ונסו שוב.');
+      else if(c==='template')toast('לא הצלחתי לקרוא את תבנית הדף. ייצאו גיבוי ופרסמו מחדש דרך Claude.');
+      else toast('הפרסום נכשל. נסו שוב בעוד רגע.');
+      render();}
+  }
+};
+async function fetchJson(url){try{const r=await fetch(url+(url.includes('?')?'&':'?')+'t='+Date.now(),{cache:'no-store'});if(r.ok)return await r.json();}catch(e){}return null;}
+const utf8b64={enc:s=>btoa(String.fromCharCode(...new TextEncoder().encode(s))),dec:b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')),c=>c.charCodeAt(0)))};
+/* Document-level 3-way merge: apply what changed here (BASE -> cur) on top of what is now on the server. */
+function mergeData(remote,base,cur){
+  const out=clone(remote||{});out.settings=out.settings||{};['teams','houses','games'].forEach(c=>{out[c]=out[c]||{};});
+  if(JSON.stringify(cur.settings)!==JSON.stringify(base.settings))out.settings=clone(cur.settings);
+  ['teams','houses','games'].forEach(c=>{new Set([...Object.keys(base[c]||{}),...Object.keys(cur[c]||{})]).forEach(id=>{
+    const b=JSON.stringify(base[c]&&base[c][id]),n=JSON.stringify(cur[c]&&cur[c][id]);if(b===n)return;
+    if(n===undefined)delete out[c][id];else out[c][id]=clone(cur[c][id]);});});
+  return out;
+}
+const gh={
+  owner:'',repo:'',branch:'main',path:'docs/data.json',sha:null,
+  configure(spec){const m=/^([^/]+)\/([^@]+)@([^:]+):(.+)$/.exec(spec);if(m){this.owner=m[1];this.repo=m[2];this.branch=m[3];this.path=m[4];}},
+  get token(){return lsGet('g3x3.ghtoken','');},set token(v){lsSet('g3x3.ghtoken',v||undefined);},
+  api(){return `https://api.github.com/repos/${this.owner}/${this.repo}/contents/${this.path}`;},
+  headers(){return {Authorization:'Bearer '+this.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};},
+  async getFile(){const r=await fetch(this.api()+'?ref='+encodeURIComponent(this.branch)+'&t='+Date.now(),{headers:this.headers(),cache:'no-store'});
+    if(r.status===401||r.status===403)throw {code:'auth'};if(r.status===404)return null;if(!r.ok)throw {code:'http',status:r.status};
+    const j=await r.json();return {sha:j.sha,data:JSON.parse(utf8b64.dec(j.content))};},
+  async loadLatest(){ // with a key: straight from the repository (no CDN delay); otherwise the published data.json
+    if(this.token){try{const f=await this.getFile();if(f){this.sha=f.sha;S.ghStatus='ok';return f.data;}}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';}}
+    return await fetchJson('data.json');},
+  async test(){try{const f=await this.getFile();S.ghStatus='ok';this.sha=f&&f.sha;toast('החיבור ל-GitHub תקין');}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';toast(e.code==='auth'?'המפתח לא התקבל. בדקו שהעתקתם אותו במלואו ושיש לו הרשאת Contents: Read and write.':'לא הצלחתי להגיע ל-GitHub. בדקו חיבור לאינטרנט.');}render();},
+  async publish(){
+    if(!this.token){ui.adminTab='connect';render();toast('קודם הזינו את מפתח הגישה בלשונית חיבור');return;}
+    if(S.publishing)return;S.publishing=true;render();
+    try{
+      for(let attempt=0;attempt<2;attempt++){
+        const f=await this.getFile();const remote=f?f.data:{settings:defaultSettings(),teams:{},houses:{},games:{}};
+        const merged=mergeData(remote,BASE,store.snapshot());
+        const body={message:`Update board ${new Date().toISOString().slice(0,16).replace('T',' ')}`,content:utf8b64.enc(JSON.stringify(merged,null,1)),branch:this.branch};if(f)body.sha=f.sha;
+        const r=await fetch(this.api(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},this.headers()),body:JSON.stringify(body)});
+        if(r.status===409||r.status===422){if(attempt===0)continue;throw {code:'conflict'};}
+        if(r.status===401||r.status===403)throw {code:'auth'};if(!r.ok)throw {code:'http',status:r.status};
+        const j=await r.json();this.sha=j.content&&j.content.sha;
+        store.load(merged);BASE=clone(store.snapshot());lsSet('g3x3.draft',undefined);S.hasDraft=false;S.ghStatus='ok';
+        toast('פורסם! ההורים יראו את העדכון תוך כדקה.');break;
+      }
+    }catch(e){console.error(e);
+      if(e.code==='auth'){S.ghStatus='auth';toast('המפתח נדחה. עדכנו אותו בלשונית חיבור.');ui.adminTab='connect';}
+      else if(e.code==='conflict')toast('מישהו אחר פרסם באותו רגע. נסו שוב.');
+      else toast('הפרסום נכשל. בדקו חיבור לאינטרנט ונסו שוב.');}
+    S.publishing=false;render();
+  }
+};
+const liveRefresh={timer:null,start(){const tick=async()=>{if(document.hidden)return;const d=await fetchJson('data.json');if(d&&JSON.stringify(d)!==JSON.stringify(store.snapshot())){store.load(d);BASE=clone(store.snapshot());render();}};
+  this.timer=setInterval(tick,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});}};
+function saveDoc(coll,id,data){const clean=clone(data);delete clean.id;S[coll][id]=clean;store.persist();scheduleRender();}
+function removeDoc(coll,id){delete S[coll][id];store.persist();scheduleRender();}
+function saveSettings(s){S.settings=s;store.persist();scheduleRender();}
+
+/* ---------- render plumbing ---------- */
+let pendingRender=false,armed=null;
+function editingNow(){const a=document.activeElement;return a&&a.closest&&a.closest('#view')&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);}
+function scheduleRender(){if(editingNow()){pendingRender=true;renderChrome();return;}render();}
+document.addEventListener('focusout',()=>{setTimeout(()=>{if(pendingRender&&!editingNow()){pendingRender=false;render();}},60);});
+function fmtDate(iso){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);if(!m)return iso;const d=new Date(+m[1],+m[2]-1,+m[3]);const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];return `יום ${days[d.getDay()]}, ${+m[3]}.${+m[2]}.${m[1]}`;}
+function isPhone(){return window.innerWidth<760;}
+
+function renderChrome(){
+  const st=S.settings;
+  $('#brand-title').innerHTML=`${esc(st.name||'אליפות הגליל 3X3')} ${st.year?`<span class="yr num">${esc(st.year)}</span>`:''}`;
+  const metaBits=[];if(st.date)metaBits.push(`<span class="num">${esc(fmtDate(st.date))}</span>`);if(st.location)metaBits.push(esc(st.location));
+  if(S.backend==='local'&&S.canWrite)metaBits.push(`<span class="pill">גרסה מקומית</span>`);
+  if(S.backend==='github')metaBits.push(`<span class="pill ${gh.token&&S.ghStatus==='ok'?'live':'ro'}">${gh.token?(S.ghStatus==='ok'?'ניהול · מחובר ל-GitHub':'ניהול · בדקו את המפתח'):'ניהול · חסר מפתח גישה'}</span>`);
+  if(S.canWrite&&store.dirtyCount())metaBits.push(`<span class="pill ro">יש שינויים שטרם פורסמו</span>`);
+  $('#brand-meta').innerHTML=metaBits.join('');
+  $('#band-actions').innerHTML=st.shareUrl?`<button type="button" class="btn ghost sm" data-act="copy-link" title="העתקת הקישור לשיתוף בוואטסאפ">העתקת קישור</button>`:'';
+  const conf=findConflicts(),nErr=conf.filter(c=>c.lvl==='err').length,dirty=S.canWrite?store.dirtyCount():0;
+  if(S.loaded&&!S.canWrite&&ui.tab==='admin')ui.tab='board';
+  $('#tabs').innerHTML=TABS.filter(t=>t[0]!=='admin'||S.canWrite).map(([id,label,short])=>`<button type="button" role="tab" class="tab" id="tab-${id}" aria-selected="${ui.tab===id}" data-tab="${id}"><span class="full">${label}</span><span class="short">${short}</span>${id==='admin'&&dirty?` <span class="badge info" title="שינויים שטרם פורסמו">${dirty}</span>`:''}${id==='admin'&&conf.length?` <span class="badge ${nErr?'':'warn'}">${conf.length}</span>`:''}</button>`).join('');
+  renderMine();renderFilters();
+  return conf;
+}
+function renderMine(){
+  const el=$('#mine');const t=ui.myTeam&&S.teams[ui.myTeam];
+  if(!t||ui.tab==='admin'){el.hidden=true;el.innerHTML='';return;}
+  const gs=gamesWhere(g=>g.teamA===ui.myTeam||g.teamB===ui.myTeam);const cur=nowClock();
+  const next=gs.find(g=>!hasScore(g)&&(!cur||(g.time||'')>=cur))||gs.find(g=>!hasScore(g))||null;
+  el.hidden=false;
+  el.innerHTML=`<div class="mine-in"><div><div class="lbl">★ הקבוצה שלי</div><b>${esc(t.name)}</b> ${catChip(t.categoryId)}</div>
+    <div class="next">${next?`<span class="muted small">המשחק הבא:</span><b class="num">${esc(next.time||'—')}</b><span class="court">${esc(next.court||'')}</span><span>נגד ${esc(sideName(next,next.teamA===ui.myTeam?'B':'A'))}</span>`:(gs.length?`<span class="muted small">כל המשחקים שוחקו</span>`:`<span class="muted small">אין משחקים משובצים</span>`)}</div>
+    <button type="button" class="btn sm" data-team="${esc(ui.myTeam)}">כל המשחקים</button><button type="button" class="btn sm x" data-act="clear-my" title="הסרת הקבוצה שלי">✕</button></div>`;
+}
+function renderFilters(){
+  const f=$('#filters');
+  if(ui.tab==='admin'||!cats().length){f.innerHTML='';f.hidden=true;return;}
+  f.hidden=false;
+  let html=`<button type="button" class="chip" aria-pressed="${!ui.cat}" data-cat="">הכול</button>`+cats().map(c=>`<button type="button" class="chip ${catClass(c.id)}" aria-pressed="${ui.cat===c.id}" data-cat="${esc(c.id)}"><span class="dot"></span>${esc(c.short||c.name)}</button>`).join('');
+  if(ui.myTeam&&S.teams[ui.myTeam]&&ui.tab!=='teams')html+=`<button type="button" class="chip gold" aria-pressed="${!!ui.onlyMine}" data-act="toggle-mine">★ רק הקבוצה שלי</button>`;
+  if(ui.tab==='teams')html+=`<input type="search" class="search" id="q" placeholder="חיפוש קבוצה או שם שחקן…" value="${esc(ui.q)}" autocomplete="off">`;
+  if(ui.tab==='board'){const mode=boardMode();html+=`<div class="seg" role="group" aria-label="תצוגה"><button type="button" aria-pressed="${mode==='list'}" data-mode="list">רשימה</button><button type="button" aria-pressed="${mode==='grid'}" data-mode="grid">טבלה</button></div>`;}
+  f.innerHTML=html;
+}
+function boardMode(){return ui.boardMode==='auto'?(isPhone()?'list':'grid'):ui.boardMode;}
+function render(){
+  pendingRender=false;
+  const conf=renderChrome();
+  const v=$('#view');
+  if(!S.loaded){v.innerHTML=`<div class="empty">טוען את לוח הטורניר…</div>`;return;}
+  if(!cats().length&&!Object.keys(S.teams).length&&ui.tab!=='admin'){
+    v.innerHTML=`<div class="empty"><b>הלוח עדיין ריק.</b><br>${S.canWrite?'עברו ל<b>ניהול → הגדרות</b> כדי להגדיר קטגוריות ומגרשים, הוסיפו קבוצות ובתים, או ייבאו קובץ גיבוי ב<b>ניהול → גיבוי</b>.':'המארגנים עדיין לא פרסמו את לוח המשחקים.'}</div>`;return;}
+  const views={board:viewBoard,houses:viewHouses,teams:viewTeams,courts:viewCourts,admin:viewAdmin};
+  v.innerHTML=(views[ui.tab]||viewBoard)(conf);
+}
+
+/* ---------- views ---------- */
+function nowClock(){const d=new Date();return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
+function nowRowTime(times){
+  if(!S.settings.date)return null;const d=new Date();const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  if(iso!==S.settings.date)return null;const cur=nowClock();let hit=null;times.forEach(t=>{if(t<=cur)hit=t;});return hit;
+}
+function kpis(games,courts,times){
+  const teamsN=new Set(games.flatMap(g=>[g.teamA,g.teamB]).filter(Boolean)).size;
+  return `<div class="kpis"><div class="kpi"><b class="num">${games.length}</b><span>משחקים</span></div><div class="kpi"><b class="num">${courts.length}</b><span>מגרשים</span></div><div class="kpi"><b class="num">${times[0]}–${times[times.length-1]}</b><span>שעות</span></div><div class="kpi"><b class="num">${teamsN}</b><span>קבוצות</span></div></div>`;
+}
+function viewBoard(conf){
+  const errIds=new Set(conf.filter(c=>c.lvl==='err').flatMap(c=>c.ids));
+  const games=gamesWhere(g=>visible(g)&&g.time&&g.court);
+  if(!games.length)return `<div class="empty">אין משחקים משובצים${ui.cat||ui.onlyMine?' בסינון הזה':''}.</div>`;
+  const times=[...new Set(games.map(g=>g.time))].sort();
+  const courts=allCourts().filter(c=>games.some(g=>g.court===c));
+  const now=nowRowTime(times);
+  let html=kpis(games,courts,times);
+  if(boardMode()==='list'){
+    html+=`<div class="slots">`;
+    times.forEach(t=>{const gs=games.filter(g=>g.time===t);
+      html+=`<section class="slot ${t===now?'now':''}"><h2 class="slot-h num">${esc(t)}<span class="cnt">${gs.length} משחקים</span></h2><div class="slot-games">${gs.map(g=>gcard(g,errIds.has(g.id))).join('')}</div></section>`;});
+    html+=`</div>`;
+  }else{
+    const cell={};games.forEach(g=>{(cell[g.time+'|'+g.court]=cell[g.time+'|'+g.court]||[]).push(g);});
+    html+=`<div class="tbl-wrap"><table class="board"><thead><tr><th>שעה</th>${courts.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>`;
+    times.forEach(t=>{html+=`<tr class="${t===now?'now':''}"><td class="t num">${esc(t)}</td>`;
+      courts.forEach(c=>{const gs=cell[t+'|'+c]||[];html+=`<td>${gs.map(g=>gcell(g,errIds.has(g.id)||gs.length>1)).join('')}</td>`;});html+='</tr>';});
+    html+=`</tbody></table></div>`;
+  }
+  html+=`<p class="hint">לחיצה על שם קבוצה פותחת את כרטיס הקבוצה. בכרטיס אפשר לסמן "הקבוצה שלי" כדי לראות תמיד את המשחק הבא למעלה.</p>`;
+  return html;
+}
+function gcell(g,err){
+  const hs=g.houseId&&S.houses[g.houseId];const sub=g.stage==='house'?(hs?hs.name:''):STAGES[g.stage]||'';
+  return `<div class="gcell ${catClass(g.categoryId)} ${err?'err':''}"><div class="sub">${catChip(g.categoryId)}<span>${esc(sub)}</span>${hasScore(g)?`<span class="score">${scoreTxt(g)}</span>`:''}</div><div class="pair">${side(g,'A')}<span class="vs">נגד</span>${side(g,'B')}</div></div>`;
+}
+function gcard(g,err){
+  const hs=g.houseId&&S.houses[g.houseId];const sub=g.stage==='house'?(hs?hs.name:''):STAGES[g.stage]||'';
+  return `<div class="gl ${catClass(g.categoryId)} ${err?'err':''}"><div class="top-row"><span class="court">${esc(g.court)}</span>${catChip(g.categoryId)}<span class="hs">${esc(sub)}</span></div><div class="teams"><span class="a">${side(g,'A')}</span>${hasScore(g)?`<span class="sc num">${esc(g.scoreA)}:${esc(g.scoreB)}</span>`:`<span class="vs">נגד</span>`}<span class="b">${side(g,'B')}</span></div></div>`;
+}
+function gameLi(g,opts){
+  opts=opts||{};const hs=g.houseId&&S.houses[g.houseId];
+  const label=opts.label!==undefined?opts.label:(g.stage==='house'?(hs?hs.name:''):STAGES[g.stage]||'');
+  const who=opts.vs?`<div>נגד ${side(g,opts.vs)}</div>`:`<div>${side(g,'A')}<span class="vs muted small"> נגד </span>${side(g,'B')}</div>`;
+  return `<li class="${opts.err?'err':''}"><div class="when num">${esc(g.time||'—')}<small>${esc(g.court||'')}</small></div><div class="who">${who}<div class="l">${opts.cat?catChip(g.categoryId)+' ':''}${esc(label)}</div></div><div class="res ${hasScore(g)?'':'pending'}">${hasScore(g)?scoreTxt(g):'טרם שוחק'}</div></li>`;
+}
+function viewHouses(conf){
+  const errIds=new Set(conf.filter(c=>c.lvl==='err').flatMap(c=>c.ids));
+  let html='';
+  cats().filter(c=>!ui.cat||c.id===ui.cat).forEach(c=>{
+    const hs=housesOf(c.id),po=gamesWhere(g=>g.categoryId===c.id&&g.stage!=='house');
+    html+=`<div class="section-h"><h2>${catChip(c.id)} ${esc(c.name)}</h2><span class="sub">${hs.length} בתים · ${teamsOf(c.id).length} קבוצות</span></div>`;
+    if(!hs.length&&!po.length){html+=`<div class="empty">אין עדיין בתים או משחקים בקטגוריה הזו.</div>`;return;}
+    html+=`<div class="cards">`;
+    hs.forEach(x=>{const st=standings(x),gs=gamesWhere(g=>g.houseId===x.id),played=gs.some(hasScore);
+      html+=`<div class="card ${(x.teamIds||[]).includes(ui.myTeam)?'mycard':''}"><h3>${esc(x.name)}</h3><div class="h-sub">${(x.teamIds||[]).length} קבוצות · ${gs.length} משחקים${gs.length?` · ${[...new Set(gs.map(g=>g.court).filter(Boolean))].join(', ')}`:''}</div>`;
+      html+=`<table class="stand"><thead><tr><th>#</th><th>קבוצה</th><th>מש׳</th><th>נצ׳</th><th>הפ׳</th><th>+/-</th></tr></thead><tbody>`;
+      st.forEach((r,i)=>{html+=`<tr class="${played&&i===0?'q':''}"><td class="n num">${i+1}</td><td>${teamBtn(r.id)}</td><td class="num">${r.p}</td><td class="num">${r.w}</td><td class="num">${r.l}</td><td class="num">${r.pf-r.pa>0?'+':''}${r.pf-r.pa}</td></tr>`;});
+      html+=`</tbody></table><ul class="glist">${gs.map(g=>gameLi(g,{label:'',err:errIds.has(g.id)})).join('')}</ul></div>`;});
+    if(po.length)html+=`<div class="card"><h3>שלבי הגמר</h3><ul class="glist">${po.map(g=>gameLi(g,{err:errIds.has(g.id)})).join('')}</ul></div>`;
+    html+=`</div>`;
+  });
+  return html||`<div class="empty">אין קטגוריות מוגדרות.</div>`;
+}
+function viewTeams(){
+  const q=(ui.q||'').trim().toLowerCase();
+  const ts=teamsOf(ui.cat||'').filter(t=>!q||t.name.toLowerCase().includes(q)||(t.players||[]).some(p=>p.toLowerCase().includes(q)));
+  if(!ts.length)return `<div class="empty">לא נמצאו קבוצות או שחקנים${q?` עבור "<b>${esc(ui.q)}</b>"`:''}.</div>`;
+  let html=`<div class="section-h"><h2>${ts.length} קבוצות</h2><span class="sub">${q?'תוצאות חיפוש':'השחקנים והמשחקים של כל קבוצה'}</span></div><div class="cards">`;
+  ts.forEach(t=>{const hs=houseOfTeam(t.id),gs=gamesWhere(g=>g.teamA===t.id||g.teamB===t.id),my=isMine(t.id);
+    html+=`<div class="card ${my?'mycard':''}" id="team-${esc(t.id)}"><h3>${my?'★ ':''}${esc(t.name)} ${catChip(t.categoryId)}</h3><div class="h-sub">${hs?esc(hs.name):'ללא בית'} · ${(t.players||[]).length} שחקנים · ${gs.length} משחקים</div>`;
+    html+=`<ul class="players">${(t.players||[]).map(p=>`<li class="${q&&p.toLowerCase().includes(q)?'hit':''}">${esc(p)}</li>`).join('')||'<li class="muted">לא הוזנו שחקנים</li>'}</ul>`;
+    html+=`<ul class="glist">${gs.map(g=>gameLi(g,{vs:g.teamA===t.id?'B':'A'})).join('')||'<li class="muted small">אין משחקים משובצים</li>'}</ul>`;
+    html+=`<div class="row" style="margin-top:10px"><button type="button" class="btn sm ${my?'':'gold'}" data-act="${my?'clear-my':'set-my'}" data-id="${esc(t.id)}">${my?'הסרה מ"הקבוצה שלי"':'★ סמן כקבוצה שלי'}</button></div></div>`;});
+  return html+'</div>';
+}
+function viewCourts(conf){
+  const errIds=new Set(conf.filter(c=>c.lvl==='err').flatMap(c=>c.ids));
+  const courts=allCourts();if(!courts.length)return `<div class="empty">לא הוגדרו מגרשים. הוסיפו אותם ב<b>ניהול → הגדרות</b>.</div>`;
+  let html=`<div class="section-h"><h2>לוח לפי מגרש</h2><span class="sub">מה שכל אחראי מגרש צריך לדעת</span></div><div class="cards">`;
+  courts.forEach(c=>{const gs=gamesWhere(g=>g.court===c&&visible(g));
+    html+=`<div class="card"><h3><span class="court">${esc(c)}</span></h3><div class="h-sub">${gs.length?`${gs.length} משחקים · ${gs[0].time}–${gs[gs.length-1].time}`:'פנוי'}</div><ul class="glist">${gs.map(g=>gameLi(g,{cat:true,err:errIds.has(g.id)})).join('')}</ul></div>`;});
+  return html+'</div>';
+}
+
+/* ---------- admin ---------- */
+function viewAdmin(conf){
+  const sub=[['games','משחקים'],['teams','קבוצות'],['houses','בתים'],['settings','הגדרות'],['backup','גיבוי וייצוא']];
+  if(S.backend==='github'){sub.push(['connect','חיבור']);if(!gh.token&&ui.adminTab!=='connect'&&!ui.sawConnect){ui.adminTab='connect';ui.sawConnect=true;saveUi();}}
+  let html=`<div class="row"><div class="subtabs">${sub.map(([id,l])=>`<button type="button" class="chip" aria-pressed="${ui.adminTab===id}" data-admin="${id}">${l}</button>`).join('')}</div></div>`;
+  if(conf.length&&ui.adminTab!=='backup'&&ui.adminTab!=='settings'&&ui.adminTab!=='connect'){
+    html+=`<div class="card"><h3>בדיקת תקינות <span class="badge ${conf.some(c=>c.lvl==='err')?'':'warn'}">${conf.length}</span></h3><div class="h-sub">מתעדכן אוטומטית עם כל שינוי. שגיאות (אדום) מסומנות גם בלוח הזמנים.</div><div style="margin-top:8px">${conf.map(c=>`<div class="issue ${c.lvl}"><span class="lvl">${c.lvl==='err'?'שגיאה':'לבדיקה'}</span><div>${esc(c.msg)}<div class="fix">${esc(c.fix)}</div></div></div>`).join('')}</div></div>`;
+  }else if(ui.adminTab==='games'||ui.adminTab==='houses'){html+=`<div class="card" style="border-color:var(--ok);color:var(--ok)">✔ לא נמצאו התנגשויות: אין כפילויות במגרשים, בשעות או בקבוצות.</div>`;}
+  const fn={games:admGames,teams:admTeams,houses:admHouses,settings:admSettings,backup:admBackup,connect:admConnect}[ui.adminTab]||admGames;
+  html+=fn(conf);
+  const dirty=store.dirtyCount();
+  if(dirty||S.publishing){
+    html+=`<div class="pubbar"><b>${S.publishing?'מפרסם…':`${dirty} שינויים שטרם פורסמו`}</b><span class="small" style="opacity:.8">${S.backend==='artifact'||S.backend==='github'?'ההורים יראו את השינויים רק אחרי פרסום.':'בגרסה המקומית השינויים נשמרים בדפדפן זה. ייצאו JSON כדי לפרסם.'}</span><span class="spacer"></span>${S.backend==='artifact'||S.backend==='github'?`<button type="button" class="btn primary" data-act="publish" ${S.publishing?'disabled':''}>פרסום להורים</button>`:''}<button type="button" class="btn sm" data-act="discard" style="color:var(--bg);border-color:currentColor;background:transparent" ${S.publishing?'disabled':''}>ביטול השינויים</button></div>`;
+  }
+  return html;
+}
+function catFilterChips(key){return `<div class="row"><button type="button" class="chip" aria-pressed="${!ui[key]}" data-acat="">הכול</button>${cats().map(c=>`<button type="button" class="chip ${catClass(c.id)}" aria-pressed="${ui[key]===c.id}" data-acat="${esc(c.id)}"><span class="dot"></span>${esc(c.short||c.name)}</button>`).join('')}</div>`;}
+function sel(name,opts,val,extra){return `<select data-f="${name}" ${extra||''}>${opts.map(([v,l])=>`<option value="${esc(v)}" ${String(v)===String(val??'')?'selected':''}>${esc(l)}</option>`).join('')}</select>`;}
+function admGames(conf){
+  if(!cats().length)return `<div class="empty">קודם הגדירו קטגוריות ב<b>הגדרות</b>.</div>`;
+  const lvl={};conf.forEach(c=>c.ids.forEach(id=>{if(lvl[id]!=='err')lvl[id]=c.lvl;}));
+  const gs=gamesWhere(g=>!ui.adminCat||g.categoryId===ui.adminCat);
+  let html=`<div class="row">${catFilterChips('adminCat')}<span class="spacer"></span><button type="button" class="btn blue" data-act="add-game">+ משחק חדש</button></div>`;
+  html+=`<div class="tbl-wrap"><table class="adm"><thead><tr><th>שעה</th><th>מגרש</th><th>קטגוריה</th><th>שלב</th><th>בית</th><th>קבוצה א׳</th><th>קבוצה ב׳</th><th>תוצאה</th><th></th></tr></thead><tbody>`;
+  gs.forEach(g=>{const cid=g.categoryId;const ts=teamsOf(cid).map(t=>[t.id,t.name]);const hs=housesOf(cid).map(x=>[x.id,x.name]);
+    const sideEd=s=>`<div class="ab">${sel('team'+s,[['','טקסט חופשי / טרם ידוע'],...ts],g['team'+s])}${g['team'+s]?'':`<input type="text" data-f="label${s}" value="${esc(g['label'+s]||'')}" placeholder="למשל: מקום 1 בית א׳" style="width:170px">`}</div>`;
+    html+=`<tr data-id="${esc(g.id)}" class="${lvl[g.id]||''}"><td><input type="time" data-f="time" value="${esc(g.time||'')}" class="num"></td><td>${sel('court',[['','—'],...allCourts().map(c=>[c,c])],g.court)}</td><td>${sel('categoryId',cats().map(c=>[c.id,c.short||c.name]),cid)}</td><td>${sel('stage',Object.entries(STAGES),g.stage||'house')}</td><td>${g.stage==='house'||!g.stage?sel('houseId',[['','—'],...hs],g.houseId):'<span class="muted">—</span>'}</td><td>${sideEd('A')}</td><td>${sideEd('B')}</td><td><span class="row" style="flex-wrap:nowrap"><input type="number" min="0" data-f="scoreA" value="${g.scoreA??''}" class="num" aria-label="תוצאה קבוצה א">:<input type="number" min="0" data-f="scoreB" value="${g.scoreB??''}" class="num" aria-label="תוצאה קבוצה ב"></span></td><td><button type="button" class="btn sm danger" data-del="games">מחק</button></td></tr>`;});
+  html+=`</tbody></table></div>`;
+  if(!gs.length)html+=`<div class="empty">אין משחקים${ui.adminCat?' בקטגוריה הזו':''}. לחצו על "משחק חדש".</div>`;
+  return html+`<p class="hint">כל שינוי נשמר כטיוטה בדפדפן הזה; לחצו "פרסום לכולם" כשסיימתם. תוצאה שמוזנת מעדכנת אוטומטית את טבלת הבית. "טקסט חופשי" מיועד למשחקי גמר שהיריבה בהם עדיין לא ידועה.</p>`;
+}
+function admTeams(){
+  if(!cats().length)return `<div class="empty">קודם הגדירו קטגוריות ב<b>הגדרות</b>.</div>`;
+  let html=catFilterChips('adminCat');
+  cats().filter(c=>!ui.adminCat||c.id===ui.adminCat).forEach(c=>{const ts=teamsOf(c.id);
+    html+=`<div class="section-h"><h2>${catChip(c.id)} ${esc(c.name)} <span class="muted small">(${ts.length})</span></h2><button type="button" class="btn sm blue" data-act="add-team" data-cat="${esc(c.id)}">+ קבוצה</button></div><div class="cards">`;
+    ts.forEach(t=>{const hs=houseOfTeam(t.id);
+      html+=`<div class="card" data-id="${esc(t.id)}" data-coll="teams"><div class="form" style="grid-template-columns:1fr auto"><label class="f">שם הקבוצה<input type="text" data-f="name" value="${esc(t.name)}"></label><label class="f">קטגוריה${sel('categoryId',cats().map(x=>[x.id,x.short||x.name]),t.categoryId)}</label></div><label class="f" style="margin-top:8px">שחקנים (שם בכל שורה)<textarea data-f="players">${esc((t.players||[]).join('\n'))}</textarea></label><div class="row" style="margin-top:8px"><span class="muted small">${hs?hs.name:'לא משויכת לבית'} · ${(t.players||[]).length} שחקנים</span><span class="spacer"></span><button type="button" class="btn sm danger" data-del="teams">מחק קבוצה</button></div></div>`;});
+    html+=`</div>`;});
+  return html;
+}
+function admHouses(){
+  if(!cats().length)return `<div class="empty">קודם הגדירו קטגוריות ב<b>הגדרות</b>.</div>`;
+  let html=catFilterChips('adminCat');
+  cats().filter(c=>!ui.adminCat||c.id===ui.adminCat).forEach(c=>{const hs=housesOf(c.id),ts=teamsOf(c.id);
+    html+=`<div class="section-h"><h2>${catChip(c.id)} ${esc(c.name)}</h2><button type="button" class="btn sm blue" data-act="add-house" data-cat="${esc(c.id)}">+ בית</button></div><div class="cards">`;
+    hs.forEach(x=>{html+=`<div class="card" data-id="${esc(x.id)}" data-coll="houses"><label class="f">שם הבית<input type="text" data-f="name" value="${esc(x.name)}"></label><div class="muted small" style="margin:10px 0 4px">קבוצות בבית (${(x.teamIds||[]).length})</div><div class="teamline">${ts.map(t=>{const other=houseOfTeam(t.id);const inHere=(x.teamIds||[]).includes(t.id);return `<label class="chip" style="cursor:pointer"><input type="checkbox" data-team-in="${esc(t.id)}" ${inHere?'checked':''} style="margin:0"> ${esc(t.name)}${other&&other.id!==x.id?` <span class="muted small">(${esc(other.name)})</span>`:''}</label>`;}).join('')||'<span class="muted small">אין קבוצות בקטגוריה</span>'}</div><div class="row" style="margin-top:10px"><button type="button" class="btn sm" data-act="gen-rr" data-house="${esc(x.id)}" title="יוצר משחק לכל זוג קבוצות שעדיין לא נפגש">צור משחקי בית חסרים</button><span class="spacer"></span><button type="button" class="btn sm danger" data-del="houses">מחק בית</button></div></div>`;});
+    if(!hs.length)html+=`<div class="empty">אין בתים בקטגוריה הזו.</div>`;
+    html+=`</div>`;});
+  return html+`<p class="hint">"צור משחקי בית חסרים" מוסיף משחקים ללא שעה ומגרש לכל זוג קבוצות בבית שעדיין אין לו משחק. לאחר מכן קבעו להם שעה ומגרש בלשונית משחקים.</p>`;
+}
+function admSettings(){
+  const st=S.settings;
+  let html=`<div class="card" data-settings><h3>פרטי הטורניר</h3><div class="form" style="margin-top:10px"><label class="f">שם הטורניר<input type="text" data-s="name" value="${esc(st.name||'')}"></label><label class="f">שנה<input type="text" data-s="year" value="${esc(st.year||'')}" style="width:90px"></label><label class="f">תאריך (להדגשת "עכשיו" בלוח)<input type="date" data-s="date" value="${esc(st.date||'')}"></label><label class="f">מיקום<input type="text" data-s="location" value="${esc(st.location||'')}" placeholder="למשל: אולם הפיס, קריית שמונה"></label><label class="f">קישור לשיתוף (לכפתור "העתקת קישור")<input type="url" data-s="shareUrl" value="${esc(st.shareUrl||'')}" placeholder="https://…" dir="ltr"></label></div>`;
+  html+=`<label class="f" style="margin-top:12px">מגרשים (אחד בכל שורה, לפי סדר ההצגה בלוח)<textarea data-s="courts">${esc((st.courts||[]).join('\n'))}</textarea></label></div>`;
+  html+=`<div class="card"><div class="section-h" style="margin:0"><h3>קטגוריות</h3><button type="button" class="btn sm blue" data-act="add-cat">+ קטגוריה</button></div><div class="tbl-wrap" style="margin-top:10px;border:0"><table class="adm"><thead><tr><th>סדר</th><th>שם מלא</th><th>שם קצר (לתגית)</th><th>קבוצות</th><th></th></tr></thead><tbody>`;
+  cats().forEach(c=>{const n=teamsOf(c.id).length;html+=`<tr data-cat-id="${esc(c.id)}"><td><input type="number" min="1" data-c="order" value="${c.order??''}"></td><td><input type="text" data-c="name" value="${esc(c.name)}"></td><td><input type="text" data-c="short" value="${esc(c.short||'')}" style="width:100px"></td><td class="num">${n}</td><td>${n?'<span class="muted small">יש קבוצות</span>':`<button type="button" class="btn sm danger" data-del-cat="${esc(c.id)}">מחק</button>`}</td></tr>`;});
+  html+=`</tbody></table></div></div>`;
+  return html;
+}
+function admConnect(){
+  const has=!!gh.token;
+  return `<div class="cards"><div class="card"><h3>חיבור ל-GitHub ${has?`<span class="pill ${S.ghStatus==='ok'?'live':'ro'}">${S.ghStatus==='ok'?'מחובר':S.ghStatus==='auth'?'המפתח נדחה':'לא נבדק'}</span>`:'<span class="pill ro">חסר מפתח</span>'}</h3>
+  <p class="hint">הדף הזה שומר את הלוח ישירות במאגר <b dir="ltr">${esc(gh.owner)}/${esc(gh.repo)}</b>, ודף ההורים מתעדכן תוך כדקה. כדי לפרסם צריך מפתח גישה אישי של GitHub עם הרשאת כתיבה למאגר הזה בלבד. המפתח נשמר רק בדפדפן הזה.</p>
+  <label class="f" style="margin-top:8px">מפתח גישה (Personal access token)<input type="password" id="gh-token" value="${esc(gh.token)}" placeholder="github_pat_…" dir="ltr" autocomplete="off"></label>
+  <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="gh-save">שמירת מפתח ובדיקה</button>${has?'<button type="button" class="btn sm" data-act="gh-forget">מחיקת המפתח מהמכשיר הזה</button>':''}</div></div>
+  <div class="card"><h3>איך יוצרים מפתח (פעם אחת)</h3><ol class="hint" style="padding-inline-start:18px;margin:8px 0 0;line-height:1.7">
+  <li>ב-GitHub: תמונת הפרופיל → <b>Settings</b> → בתחתית התפריט <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+  <li>שם: <code>galil-3x3</code>. תוקף: בחרו תאריך אחרי הטורניר.</li>
+  <li><b>Repository access</b>: Only select repositories → <code dir="ltr">${esc(gh.repo)}</code>.</li>
+  <li><b>Permissions → Repository permissions → Contents</b>: Read and write. (שום דבר אחר.)</li>
+  <li><b>Generate token</b>, העתיקו את המפתח והדביקו כאן. מי שעוד מנהל את הטורניר מקבל מכם את אותו מפתח בהודעה פרטית ומדביק אותו בטלפון שלו.</li></ol></div></div>`;
+}
+function admBackup(){
+  const n={t:Object.keys(S.teams).length,h:Object.keys(S.houses).length,g:Object.keys(S.games).length};
+  return `<div class="cards"><div class="card"><h3>ייצוא גיבוי</h3><p class="hint">קובץ JSON עם כל ההגדרות, הקבוצות, הבתים והמשחקים (${n.t} קבוצות · ${n.h} בתים · ${n.g} משחקים). שמרו עותק לפני שינויים גדולים.</p><button type="button" class="btn blue" data-act="export">הורדת קובץ גיבוי</button></div>
+  <div class="card"><h3>ייבוא גיבוי</h3><p class="hint">מחליף את <b>כל</b> הנתונים הנוכחיים בתוכן הקובץ (כטיוטה, עד שתלחצו פרסום).</p><input type="file" id="import-file" accept="application/json,.json"><div class="row" style="margin-top:8px"><button type="button" class="btn danger" data-act="import">ייבוא והחלפה</button></div></div>
+  <div class="card"><h3>איפוס</h3><p class="hint">מוחק את כל המשחקים, הבתים והקבוצות (ההגדרות נשארות). ניתן לבטל עם "ביטול השינויים" כל עוד לא פורסם.</p><button type="button" class="btn danger" data-act="wipe">מחיקת כל הנתונים</button></div></div>`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button,label');if(!t)return;
+  if(t.dataset.tab){ui.tab=t.dataset.tab;saveUi();try{history.replaceState(null,'','#'+ui.tab);}catch(x){}render();window.scrollTo(0,0);return;}
+  if(t.dataset.cat!==undefined&&t.classList.contains('chip')){ui.cat=t.dataset.cat;saveUi();render();return;}
+  if(t.dataset.mode){ui.boardMode=t.dataset.mode;saveUi();render();return;}
+  if(t.dataset.admin){ui.adminTab=t.dataset.admin;saveUi();render();return;}
+  if(t.dataset.acat!==undefined){ui.adminCat=t.dataset.acat;saveUi();render();return;}
+  if(t.dataset.team){ui.tab='teams';ui.q=teamName(t.dataset.team);ui.cat='';saveUi();render();const el=document.getElementById('team-'+t.dataset.team);if(el)el.scrollIntoView({block:'start'});return;}
+  if(t.dataset.del){
+    const row=t.closest('[data-id]');if(!row)return;
+    if(armed!==t){document.querySelectorAll('.btn.arm').forEach(b=>{b.classList.remove('arm');b.textContent=b.dataset.orig||'מחק';});armed=t;t.dataset.orig=t.textContent;t.classList.add('arm');t.textContent='לאשר מחיקה?';setTimeout(()=>{if(armed===t){armed=null;t.classList.remove('arm');t.textContent=t.dataset.orig;}},4000);return;}
+    armed=null;deleteEntity(t.dataset.del,row.dataset.id);return;}
+  if(t.dataset.delCat){const id=t.dataset.delCat;if(teamsOf(id).length)return toast('לא ניתן למחוק קטגוריה שיש בה קבוצות');const s=clone(S.settings);s.categories=s.categories.filter(c=>c.id!==id);saveSettings(s);return;}
+  const act=t.dataset.act;if(!act)return;
+  if(act==='set-my'){ui.myTeam=t.dataset.id;ui.onlyMine=false;saveUi();render();toast(`${teamName(ui.myTeam)} סומנה כקבוצה שלך`);}
+  if(act==='clear-my'){ui.myTeam='';ui.onlyMine=false;saveUi();render();}
+  if(act==='toggle-mine'){ui.onlyMine=!ui.onlyMine;saveUi();render();}
+  if(act==='copy-link'){const u=S.settings.shareUrl;try{await navigator.clipboard.writeText(u);toast('הקישור הועתק. הדביקו בוואטסאפ.');}catch(x){window.prompt&&window.prompt('העתיקו את הקישור:',u);toast(u,6000);}}
+  if(act==='publish')store.publish();
+  if(act==='gh-save'){const v=($('#gh-token').value||'').trim();if(!v){toast('הדביקו את המפתח קודם');return;}gh.token=v;S.ghStatus='';await gh.test();}
+  if(act==='gh-forget'){gh.token='';S.ghStatus='';render();toast('המפתח נמחק מהמכשיר הזה');}
+  if(act==='discard'){if(!t.classList.contains('arm')){t.classList.add('arm');t.textContent='בטוח? לחצו שוב לביטול';setTimeout(()=>{t.classList.remove('arm');t.textContent='ביטול השינויים';},4000);return;}store.discard();}
+  if(act==='add-game'){const cid=ui.adminCat||cats()[0].id;const gs=gamesWhere(g=>g.categoryId===cid);const last=gs[gs.length-1];const id=uid('g');saveDoc('games',id,{categoryId:cid,houseId:'',stage:'house',time:last?last.time:'',court:last?last.court:(allCourts()[0]||''),teamA:'',teamB:'',labelA:'',labelB:'',scoreA:null,scoreB:null,order:Date.now()});toast('נוסף משחק חדש בסוף הרשימה');}
+  if(act==='add-team'){const cid=t.dataset.cat;const id=uid('t');saveDoc('teams',id,{name:'קבוצה חדשה',categoryId:cid,players:[],order:Date.now()});setTimeout(()=>{const el=document.querySelector(`[data-id="${id}"] input[data-f=name]`);if(el){el.focus();el.select();}},50);}
+  if(act==='add-house'){const cid=t.dataset.cat;const n=housesOf(cid).length;const names=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ז׳','ח׳'];saveDoc('houses',uid('h'),{name:'בית '+(names[n]||(n+1)),categoryId:cid,teamIds:[],order:Date.now()});}
+  if(act==='gen-rr'){const hs=S.houses[t.dataset.house];if(!hs)return;const ids=hs.teamIds||[];let made=0;
+    for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){const a=ids[i],b=ids[j];const exists=gamesWhere(g=>g.houseId===t.dataset.house&&((g.teamA===a&&g.teamB===b)||(g.teamA===b&&g.teamB===a))).length;
+      if(!exists){made++;saveDoc('games',uid('g'),{categoryId:hs.categoryId,houseId:t.dataset.house,stage:'house',time:'',court:'',teamA:a,teamB:b,labelA:'',labelB:'',scoreA:null,scoreB:null,order:Date.now()+made});}}
+    toast(made?`נוצרו ${made} משחקים ללא שעה. קבעו להם שעה ומגרש בלשונית משחקים.`:'כל הזוגות בבית כבר נפגשים.');}
+  if(act==='add-cat'){const s=clone(S.settings);s.categories=s.categories||[];s.categories.push({id:uid('c'),name:'קטגוריה חדשה',short:'חדשה',order:s.categories.length+1});saveSettings(s);}
+  if(act==='export')exportJson();
+  if(act==='import')importJson();
+  if(act==='wipe'){if(!t.classList.contains('arm')){t.classList.add('arm');t.textContent='בטוח? לחצו שוב למחיקה';setTimeout(()=>{t.classList.remove('arm');t.textContent='מחיקת כל הנתונים';},4000);return;}
+    S.games={};S.houses={};S.teams={};store.persist();render();toast('כל הנתונים נמחקו (כטיוטה)');}
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.id==='q'){ui.q=el.value;saveUi();render();return;}
+  if(el.id==='import-file')return;
+  if(el.dataset.teamIn){const card=el.closest('[data-id]');const hs=S.houses[card.dataset.id];if(!hs)return;const set=new Set(hs.teamIds||[]);if(el.checked)set.add(el.dataset.teamIn);else set.delete(el.dataset.teamIn);saveDoc('houses',card.dataset.id,Object.assign({},hs,{teamIds:[...set]}));return;}
+  if(el.dataset.s!==undefined){const s=clone(S.settings);const k=el.dataset.s;s[k]=k==='courts'?el.value.split('\n').map(x=>x.trim()).filter(Boolean):el.value.trim();saveSettings(s);return;}
+  if(el.dataset.c!==undefined){const s=clone(S.settings);const row=el.closest('[data-cat-id]');const c=(s.categories||[]).find(x=>x.id===row.dataset.catId);if(!c)return;c[el.dataset.c]=el.dataset.c==='order'?(+el.value||0):el.value.trim();saveSettings(s);return;}
+  const f=el.dataset.f;if(!f)return;
+  const row=el.closest('[data-id]');if(!row)return;
+  const coll=row.dataset.coll||'games';const cur=S[coll][row.dataset.id];if(!cur)return;
+  const next=clone(cur);
+  if(f==='players')next.players=el.value.split('\n').map(x=>x.trim()).filter(Boolean);
+  else if(f==='scoreA'||f==='scoreB')next[f]=el.value===''?null:Math.max(0,parseInt(el.value,10)||0);
+  else next[f]=el.value;
+  if(coll==='games'){
+    if(f==='teamA'||f==='teamB'){if(el.value)next[f==='teamA'?'labelA':'labelB']='';}
+    if(f==='stage'&&el.value!=='house')next.houseId='';
+    if(f==='categoryId'){['teamA','teamB'].forEach(k=>{if(next[k]&&S.teams[next[k]]&&S.teams[next[k]].categoryId!==el.value){next[k==='teamA'?'labelA':'labelB']=teamName(next[k]);next[k]='';}});if(next.houseId&&S.houses[next.houseId]&&S.houses[next.houseId].categoryId!==el.value)next.houseId='';}
+  }
+  if(coll==='teams'&&f==='categoryId'&&el.value!==cur.categoryId){const hs=houseOfTeam(row.dataset.id);if(hs)saveDoc('houses',hs.id,Object.assign({},hs,{teamIds:hs.teamIds.filter(x=>x!==row.dataset.id)}));}
+  saveDoc(coll,row.dataset.id,next);
+  if(coll==='games'&&(f==='teamA'||f==='teamB'||f==='stage'||f==='categoryId'))render();
+});
+function deleteEntity(coll,id){
+  if(coll==='teams'){const name=teamName(id);
+    list('houses').forEach(hs=>{if((hs.teamIds||[]).includes(id))saveDoc('houses',hs.id,Object.assign({},hs,{teamIds:hs.teamIds.filter(x=>x!==id)}));});
+    list('games').forEach(g=>{if(g.teamA===id||g.teamB===id){const n=Object.assign({},g);if(g.teamA===id){n.teamA='';n.labelA=name;}if(g.teamB===id){n.teamB='';n.labelB=name;}saveDoc('games',g.id,n);}});
+    if(ui.myTeam===id){ui.myTeam='';saveUi();}}
+  if(coll==='houses'){list('games').forEach(g=>{if(g.houseId===id)saveDoc('games',g.id,Object.assign({},g,{houseId:''}));});}
+  removeDoc(coll,id);toast('נמחק (כטיוטה)');
+}
+async function exportJson(){
+  const data=JSON.stringify(Object.assign({exportedAt:new Date().toISOString()},store.snapshot()),null,1);
+  const name=`galil-3x3-${(S.settings.year||'')}-${new Date().toISOString().slice(0,10)}.json`;
+  if(store.downloads){try{await store.downloads.save({filename:name,data});toast('הקובץ נשמר');}catch(e){if(e&&e.code!=='declined')toast('ההורדה לא זמינה כאן');}return;}
+  if(window.claude){toast('ההורדה לא זמינה בתצוגה הזו');return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+}
+async function importJson(){
+  const inp=$('#import-file');if(!inp||!inp.files||!inp.files[0]){toast('בחרו קודם קובץ JSON');return;}
+  let d;try{d=JSON.parse(await inp.files[0].text());}catch(e){toast('הקובץ אינו JSON תקין');return;}
+  if(!d||typeof d!=='object'||!d.settings||!d.teams||!d.games){toast('הקובץ חסר שדות: settings, teams, houses, games');return;}
+  store.load(d);store.persist();render();toast('הייבוא הושלם כטיוטה. לחצו "פרסום לכולם" כדי שכולם יראו.');
+}
+window.addEventListener('hashchange',()=>{const h=location.hash.replace('#','');if(TABS.some(t=>t[0]===h)&&h!==ui.tab){ui.tab=h;saveUi();render();}});
+let rzT;window.addEventListener('resize',()=>{if(ui.boardMode!=='auto'||ui.tab!=='board')return;clearTimeout(rzT);rzT=setTimeout(()=>{if(!editingNow())render();},150);});
+setInterval(()=>{if(S.settings.date&&(ui.tab==='board'||ui.myTeam)&&!editingNow())render();},60000);
+
+render();
+store.init().catch(e=>{console.error(e);S.loaded=true;render();toast('טעינת הנתונים נכשלה');});
+})();
+</script>
+</body>
+</html>

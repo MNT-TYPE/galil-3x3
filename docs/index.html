@@ -339,16 +339,24 @@ const store={
   snapshot(){return {settings:S.settings,teams:S.teams,houses:S.houses,games:S.games};},
   load(d){Object.assign(S,{settings:Object.assign(defaultSettings(),d.settings||{}),teams:d.teams||{},houses:d.houses||{},games:d.games||{}});},
   async init(){
-    let embedded=null;try{const raw=$('#tournament-data').textContent.trim();if(raw)embedded=JSON.parse(raw);}catch(e){console.error('bad embedded data',e);}
+    const tag=$('#tournament-data');
+    let embedded=null;try{const raw=tag.textContent.trim();if(raw)embedded=JSON.parse(raw);}catch(e){console.error('bad embedded data',e);}
     const cl=window.claude;
-    if(cl&&typeof cl.use==='function'){
+    if(tag.dataset.github){ // management page on GitHub Pages: edits are saved to the repository
+      S.backend='github';S.canWrite=true;gh.configure(tag.dataset.github);
+      const remote=await gh.loadLatest();if(remote)embedded=remote;
+    }else if(tag.hasAttribute('data-public')){ // parents' page: view-only, refreshed from data.json
+      S.backend='public';S.canWrite=false;
+      const remote=await fetchJson('data.json');if(remote)embedded=remote;
+      liveRefresh.start();
+    }else if(cl&&typeof cl.use==='function'){
       S.backend='artifact';
       const [art,usr]=await Promise.all([cl.use('artifact').catch(()=>null),cl.use('user').catch(()=>null)]);
       this.artifact=art;cl.use('downloads').then(d=>{this.downloads=d;}).catch(()=>{});
       let can=false;try{if(art&&usr)can=!!(await usr.canEdit());}catch(e){}
       S.canWrite=can;
-    }else{S.backend='local';S.canWrite=!$('#tournament-data').hasAttribute('data-public'); // a static public build is view-only
-      if(!embedded){try{const r=await fetch('seed.json',{cache:'no-store'});if(r.ok)embedded=await r.json();}catch(e){}}
+    }else{S.backend='local';S.canWrite=true;
+      if(!embedded)embedded=await fetchJson('seed.json');
     }
     this.load(embedded||{});BASE=clone(this.snapshot()); // normalized shape, so draft comparison is exact
     const draft=S.canWrite?lsGet('g3x3.draft',null):null;
@@ -361,6 +369,7 @@ const store={
     ['teams','houses','games'].forEach(c=>{const a=S[c],b=BASE[c]||{};new Set([...Object.keys(a),...Object.keys(b)]).forEach(id=>{if(JSON.stringify(a[id])!==JSON.stringify(b[id]))n++;});});return n;},
   discard(){this.load(clone(BASE));lsSet('g3x3.draft',undefined);S.hasDraft=false;render();toast('השינויים בוטלו');},
   async publish(){
+    if(S.backend==='github')return gh.publish();
     if(!this.artifact){toast('פרסום אפשרי רק מתוך הדף המפורסם. כאן אפשר לייצא JSON.');return;}
     if(S.publishing)return;S.publishing=true;render();
     const LT='<';
@@ -383,6 +392,54 @@ const store={
       render();}
   }
 };
+async function fetchJson(url){try{const r=await fetch(url+(url.includes('?')?'&':'?')+'t='+Date.now(),{cache:'no-store'});if(r.ok)return await r.json();}catch(e){}return null;}
+const utf8b64={enc:s=>btoa(String.fromCharCode(...new TextEncoder().encode(s))),dec:b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')),c=>c.charCodeAt(0)))};
+/* Document-level 3-way merge: apply what changed here (BASE -> cur) on top of what is now on the server. */
+function mergeData(remote,base,cur){
+  const out=clone(remote||{});out.settings=out.settings||{};['teams','houses','games'].forEach(c=>{out[c]=out[c]||{};});
+  if(JSON.stringify(cur.settings)!==JSON.stringify(base.settings))out.settings=clone(cur.settings);
+  ['teams','houses','games'].forEach(c=>{new Set([...Object.keys(base[c]||{}),...Object.keys(cur[c]||{})]).forEach(id=>{
+    const b=JSON.stringify(base[c]&&base[c][id]),n=JSON.stringify(cur[c]&&cur[c][id]);if(b===n)return;
+    if(n===undefined)delete out[c][id];else out[c][id]=clone(cur[c][id]);});});
+  return out;
+}
+const gh={
+  owner:'',repo:'',branch:'main',path:'docs/data.json',sha:null,
+  configure(spec){const m=/^([^/]+)\/([^@]+)@([^:]+):(.+)$/.exec(spec);if(m){this.owner=m[1];this.repo=m[2];this.branch=m[3];this.path=m[4];}},
+  get token(){return lsGet('g3x3.ghtoken','');},set token(v){lsSet('g3x3.ghtoken',v||undefined);},
+  api(){return `https://api.github.com/repos/${this.owner}/${this.repo}/contents/${this.path}`;},
+  headers(){return {Authorization:'Bearer '+this.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};},
+  async getFile(){const r=await fetch(this.api()+'?ref='+encodeURIComponent(this.branch)+'&t='+Date.now(),{headers:this.headers(),cache:'no-store'});
+    if(r.status===401||r.status===403)throw {code:'auth'};if(r.status===404)return null;if(!r.ok)throw {code:'http',status:r.status};
+    const j=await r.json();return {sha:j.sha,data:JSON.parse(utf8b64.dec(j.content))};},
+  async loadLatest(){ // with a key: straight from the repository (no CDN delay); otherwise the published data.json
+    if(this.token){try{const f=await this.getFile();if(f){this.sha=f.sha;S.ghStatus='ok';return f.data;}}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';}}
+    return await fetchJson('data.json');},
+  async test(){try{const f=await this.getFile();S.ghStatus='ok';this.sha=f&&f.sha;toast('החיבור ל-GitHub תקין');}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';toast(e.code==='auth'?'המפתח לא התקבל. בדקו שהעתקתם אותו במלואו ושיש לו הרשאת Contents: Read and write.':'לא הצלחתי להגיע ל-GitHub. בדקו חיבור לאינטרנט.');}render();},
+  async publish(){
+    if(!this.token){ui.adminTab='connect';render();toast('קודם הזינו את מפתח הגישה בלשונית חיבור');return;}
+    if(S.publishing)return;S.publishing=true;render();
+    try{
+      for(let attempt=0;attempt<2;attempt++){
+        const f=await this.getFile();const remote=f?f.data:{settings:defaultSettings(),teams:{},houses:{},games:{}};
+        const merged=mergeData(remote,BASE,store.snapshot());
+        const body={message:`Update board ${new Date().toISOString().slice(0,16).replace('T',' ')}`,content:utf8b64.enc(JSON.stringify(merged,null,1)),branch:this.branch};if(f)body.sha=f.sha;
+        const r=await fetch(this.api(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},this.headers()),body:JSON.stringify(body)});
+        if(r.status===409||r.status===422){if(attempt===0)continue;throw {code:'conflict'};}
+        if(r.status===401||r.status===403)throw {code:'auth'};if(!r.ok)throw {code:'http',status:r.status};
+        const j=await r.json();this.sha=j.content&&j.content.sha;
+        store.load(merged);BASE=clone(store.snapshot());lsSet('g3x3.draft',undefined);S.hasDraft=false;S.ghStatus='ok';
+        toast('פורסם! ההורים יראו את העדכון תוך כדקה.');break;
+      }
+    }catch(e){console.error(e);
+      if(e.code==='auth'){S.ghStatus='auth';toast('המפתח נדחה. עדכנו אותו בלשונית חיבור.');ui.adminTab='connect';}
+      else if(e.code==='conflict')toast('מישהו אחר פרסם באותו רגע. נסו שוב.');
+      else toast('הפרסום נכשל. בדקו חיבור לאינטרנט ונסו שוב.');}
+    S.publishing=false;render();
+  }
+};
+const liveRefresh={timer:null,start(){const tick=async()=>{if(document.hidden)return;const d=await fetchJson('data.json');if(d&&JSON.stringify(d)!==JSON.stringify(store.snapshot())){store.load(d);BASE=clone(store.snapshot());render();}};
+  this.timer=setInterval(tick,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});}};
 function saveDoc(coll,id,data){const clean=clone(data);delete clean.id;S[coll][id]=clean;store.persist();scheduleRender();}
 function removeDoc(coll,id){delete S[coll][id];store.persist();scheduleRender();}
 function saveSettings(s){S.settings=s;store.persist();scheduleRender();}
@@ -400,11 +457,12 @@ function renderChrome(){
   $('#brand-title').innerHTML=`${esc(st.name||'אליפות הגליל 3X3')} ${st.year?`<span class="yr num">${esc(st.year)}</span>`:''}`;
   const metaBits=[];if(st.date)metaBits.push(`<span class="num">${esc(fmtDate(st.date))}</span>`);if(st.location)metaBits.push(esc(st.location));
   if(S.backend==='local'&&S.canWrite)metaBits.push(`<span class="pill">גרסה מקומית</span>`);
+  if(S.backend==='github')metaBits.push(`<span class="pill ${gh.token&&S.ghStatus==='ok'?'live':'ro'}">${gh.token?(S.ghStatus==='ok'?'ניהול · מחובר ל-GitHub':'ניהול · בדקו את המפתח'):'ניהול · חסר מפתח גישה'}</span>`);
   if(S.canWrite&&store.dirtyCount())metaBits.push(`<span class="pill ro">יש שינויים שטרם פורסמו</span>`);
   $('#brand-meta').innerHTML=metaBits.join('');
   $('#band-actions').innerHTML=st.shareUrl?`<button type="button" class="btn ghost sm" data-act="copy-link" title="העתקת הקישור לשיתוף בוואטסאפ">העתקת קישור</button>`:'';
   const conf=findConflicts(),nErr=conf.filter(c=>c.lvl==='err').length,dirty=S.canWrite?store.dirtyCount():0;
-  if(!S.canWrite&&ui.tab==='admin')ui.tab='board';
+  if(S.loaded&&!S.canWrite&&ui.tab==='admin')ui.tab='board';
   $('#tabs').innerHTML=TABS.filter(t=>t[0]!=='admin'||S.canWrite).map(([id,label,short])=>`<button type="button" role="tab" class="tab" id="tab-${id}" aria-selected="${ui.tab===id}" data-tab="${id}"><span class="full">${label}</span><span class="short">${short}</span>${id==='admin'&&dirty?` <span class="badge info" title="שינויים שטרם פורסמו">${dirty}</span>`:''}${id==='admin'&&conf.length?` <span class="badge ${nErr?'':'warn'}">${conf.length}</span>`:''}</button>`).join('');
   renderMine();renderFilters();
   return conf;
@@ -530,15 +588,16 @@ function viewCourts(conf){
 /* ---------- admin ---------- */
 function viewAdmin(conf){
   const sub=[['games','משחקים'],['teams','קבוצות'],['houses','בתים'],['settings','הגדרות'],['backup','גיבוי וייצוא']];
+  if(S.backend==='github'){sub.push(['connect','חיבור']);if(!gh.token&&ui.adminTab!=='connect'&&!ui.sawConnect){ui.adminTab='connect';ui.sawConnect=true;saveUi();}}
   let html=`<div class="row"><div class="subtabs">${sub.map(([id,l])=>`<button type="button" class="chip" aria-pressed="${ui.adminTab===id}" data-admin="${id}">${l}</button>`).join('')}</div></div>`;
-  if(conf.length&&ui.adminTab!=='backup'&&ui.adminTab!=='settings'){
+  if(conf.length&&ui.adminTab!=='backup'&&ui.adminTab!=='settings'&&ui.adminTab!=='connect'){
     html+=`<div class="card"><h3>בדיקת תקינות <span class="badge ${conf.some(c=>c.lvl==='err')?'':'warn'}">${conf.length}</span></h3><div class="h-sub">מתעדכן אוטומטית עם כל שינוי. שגיאות (אדום) מסומנות גם בלוח הזמנים.</div><div style="margin-top:8px">${conf.map(c=>`<div class="issue ${c.lvl}"><span class="lvl">${c.lvl==='err'?'שגיאה':'לבדיקה'}</span><div>${esc(c.msg)}<div class="fix">${esc(c.fix)}</div></div></div>`).join('')}</div></div>`;
   }else if(ui.adminTab==='games'||ui.adminTab==='houses'){html+=`<div class="card" style="border-color:var(--ok);color:var(--ok)">✔ לא נמצאו התנגשויות: אין כפילויות במגרשים, בשעות או בקבוצות.</div>`;}
-  const fn={games:admGames,teams:admTeams,houses:admHouses,settings:admSettings,backup:admBackup}[ui.adminTab]||admGames;
+  const fn={games:admGames,teams:admTeams,houses:admHouses,settings:admSettings,backup:admBackup,connect:admConnect}[ui.adminTab]||admGames;
   html+=fn(conf);
   const dirty=store.dirtyCount();
   if(dirty||S.publishing){
-    html+=`<div class="pubbar"><b>${S.publishing?'מפרסם…':`${dirty} שינויים שטרם פורסמו`}</b><span class="small" style="opacity:.8">${S.backend==='artifact'?'ההורים יראו את השינויים רק אחרי פרסום.':'בגרסה המקומית השינויים נשמרים בדפדפן זה. ייצאו JSON כדי לפרסם.'}</span><span class="spacer"></span>${S.backend==='artifact'?`<button type="button" class="btn primary" data-act="publish" ${S.publishing?'disabled':''}>פרסום לכולם</button>`:''}<button type="button" class="btn sm" data-act="discard" style="color:var(--bg);border-color:currentColor;background:transparent" ${S.publishing?'disabled':''}>ביטול השינויים</button></div>`;
+    html+=`<div class="pubbar"><b>${S.publishing?'מפרסם…':`${dirty} שינויים שטרם פורסמו`}</b><span class="small" style="opacity:.8">${S.backend==='artifact'||S.backend==='github'?'ההורים יראו את השינויים רק אחרי פרסום.':'בגרסה המקומית השינויים נשמרים בדפדפן זה. ייצאו JSON כדי לפרסם.'}</span><span class="spacer"></span>${S.backend==='artifact'||S.backend==='github'?`<button type="button" class="btn primary" data-act="publish" ${S.publishing?'disabled':''}>פרסום להורים</button>`:''}<button type="button" class="btn sm" data-act="discard" style="color:var(--bg);border-color:currentColor;background:transparent" ${S.publishing?'disabled':''}>ביטול השינויים</button></div>`;
   }
   return html;
 }
@@ -586,6 +645,19 @@ function admSettings(){
   html+=`</tbody></table></div></div>`;
   return html;
 }
+function admConnect(){
+  const has=!!gh.token;
+  return `<div class="cards"><div class="card"><h3>חיבור ל-GitHub ${has?`<span class="pill ${S.ghStatus==='ok'?'live':'ro'}">${S.ghStatus==='ok'?'מחובר':S.ghStatus==='auth'?'המפתח נדחה':'לא נבדק'}</span>`:'<span class="pill ro">חסר מפתח</span>'}</h3>
+  <p class="hint">הדף הזה שומר את הלוח ישירות במאגר <b dir="ltr">${esc(gh.owner)}/${esc(gh.repo)}</b>, ודף ההורים מתעדכן תוך כדקה. כדי לפרסם צריך מפתח גישה אישי של GitHub עם הרשאת כתיבה למאגר הזה בלבד. המפתח נשמר רק בדפדפן הזה.</p>
+  <label class="f" style="margin-top:8px">מפתח גישה (Personal access token)<input type="password" id="gh-token" value="${esc(gh.token)}" placeholder="github_pat_…" dir="ltr" autocomplete="off"></label>
+  <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="gh-save">שמירת מפתח ובדיקה</button>${has?'<button type="button" class="btn sm" data-act="gh-forget">מחיקת המפתח מהמכשיר הזה</button>':''}</div></div>
+  <div class="card"><h3>איך יוצרים מפתח (פעם אחת)</h3><ol class="hint" style="padding-inline-start:18px;margin:8px 0 0;line-height:1.7">
+  <li>ב-GitHub: תמונת הפרופיל → <b>Settings</b> → בתחתית התפריט <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+  <li>שם: <code>galil-3x3</code>. תוקף: בחרו תאריך אחרי הטורניר.</li>
+  <li><b>Repository access</b>: Only select repositories → <code dir="ltr">${esc(gh.repo)}</code>.</li>
+  <li><b>Permissions → Repository permissions → Contents</b>: Read and write. (שום דבר אחר.)</li>
+  <li><b>Generate token</b>, העתיקו את המפתח והדביקו כאן. מי שעוד מנהל את הטורניר מקבל מכם את אותו מפתח בהודעה פרטית ומדביק אותו בטלפון שלו.</li></ol></div></div>`;
+}
 function admBackup(){
   const n={t:Object.keys(S.teams).length,h:Object.keys(S.houses).length,g:Object.keys(S.games).length};
   return `<div class="cards"><div class="card"><h3>ייצוא גיבוי</h3><p class="hint">קובץ JSON עם כל ההגדרות, הקבוצות, הבתים והמשחקים (${n.t} קבוצות · ${n.h} בתים · ${n.g} משחקים). שמרו עותק לפני שינויים גדולים.</p><button type="button" class="btn blue" data-act="export">הורדת קובץ גיבוי</button></div>
@@ -613,6 +685,8 @@ document.addEventListener('click',async e=>{
   if(act==='toggle-mine'){ui.onlyMine=!ui.onlyMine;saveUi();render();}
   if(act==='copy-link'){const u=S.settings.shareUrl;try{await navigator.clipboard.writeText(u);toast('הקישור הועתק. הדביקו בוואטסאפ.');}catch(x){window.prompt&&window.prompt('העתיקו את הקישור:',u);toast(u,6000);}}
   if(act==='publish')store.publish();
+  if(act==='gh-save'){const v=($('#gh-token').value||'').trim();if(!v){toast('הדביקו את המפתח קודם');return;}gh.token=v;S.ghStatus='';await gh.test();}
+  if(act==='gh-forget'){gh.token='';S.ghStatus='';render();toast('המפתח נמחק מהמכשיר הזה');}
   if(act==='discard'){if(!t.classList.contains('arm')){t.classList.add('arm');t.textContent='בטוח? לחצו שוב לביטול';setTimeout(()=>{t.classList.remove('arm');t.textContent='ביטול השינויים';},4000);return;}store.discard();}
   if(act==='add-game'){const cid=ui.adminCat||cats()[0].id;const gs=gamesWhere(g=>g.categoryId===cid);const last=gs[gs.length-1];const id=uid('g');saveDoc('games',id,{categoryId:cid,houseId:'',stage:'house',time:last?last.time:'',court:last?last.court:(allCourts()[0]||''),teamA:'',teamB:'',labelA:'',labelB:'',scoreA:null,scoreB:null,order:Date.now()});toast('נוסף משחק חדש בסוף הרשימה');}
   if(act==='add-team'){const cid=t.dataset.cat;const id=uid('t');saveDoc('teams',id,{name:'קבוצה חדשה',categoryId:cid,players:[],order:Date.now()});setTimeout(()=>{const el=document.querySelector(`[data-id="${id}"] input[data-f=name]`);if(el){el.focus();el.select();}},50);}
