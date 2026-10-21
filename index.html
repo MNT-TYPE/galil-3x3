@@ -416,7 +416,7 @@ const gh={
   async loadLatest(){ // with a key: straight from the repository (no CDN delay); otherwise the published data.json
     if(this.token){try{const f=await this.getFile();if(f){this.sha=f.sha;S.ghStatus='ok';return f.data;}}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';}}
     return await fetchJson('data.json');},
-  async test(){try{const f=await this.getFile();S.ghStatus='ok';this.sha=f&&f.sha;toast('החיבור ל-GitHub תקין');}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';toast(e.code==='auth'?'המפתח לא התקבל. בדקו שהעתקתם אותו במלואו ושיש לו הרשאת Contents: Read and write.':'לא הצלחתי להגיע ל-GitHub. בדקו חיבור לאינטרנט.');}render();},
+  async test(){try{const f=await this.getFile();if(!f)throw {code:'auth'};S.ghStatus='ok';this.sha=f.sha;toast('החיבור ל-GitHub תקין');}catch(e){S.ghStatus=e.code==='auth'?'auth':'err';toast(e.code==='auth'?'המפתח לא מגיע למאגר. בדקו שנבחר המאגר הנכון ושיש הרשאת Contents: Read and write.':'לא הצלחתי להגיע ל-GitHub. בדקו חיבור לאינטרנט.');}render();},
   async publish(){
     if(!this.token){ui.adminTab='connect';render();toast('קודם הזינו את מפתח הגישה בלשונית חיבור');return;}
     if(S.publishing)return;S.publishing=true;render();
@@ -428,7 +428,7 @@ const gh={
         const r=await fetch(this.api(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},this.headers()),body:JSON.stringify(body)});
         if(r.status===409||r.status===422){if(attempt===0)continue;throw {code:'conflict'};}
         if(r.status===401||r.status===403)throw {code:'auth'};if(!r.ok)throw {code:'http',status:r.status};
-        const j=await r.json();this.sha=j.content&&j.content.sha;
+        const j=await r.json();this.sha=j.content&&j.content.sha;S.lastPublish={at:new Date(),url:j.commit&&j.commit.html_url};
         store.load(merged);BASE=clone(store.snapshot());lsSet('g3x3.draft',undefined);S.hasDraft=false;S.ghStatus='ok';
         toast('פורסם! ההורים יראו את העדכון תוך כדקה.');break;
       }
@@ -649,6 +649,7 @@ function admSettings(){
 function admConnect(){
   const has=!!gh.token;
   return `<div class="cards"><div class="card"><h3>חיבור ל-GitHub ${has?`<span class="pill ${S.ghStatus==='ok'?'live':'ro'}">${S.ghStatus==='ok'?'מחובר':S.ghStatus==='auth'?'המפתח נדחה':'לא נבדק'}</span>`:'<span class="pill ro">חסר מפתח</span>'}</h3>
+  ${S.lastPublish?`<p class="hint" style="color:var(--ok)">✔ פורסם לאחרונה מהמכשיר הזה ב-<span class="num">${S.lastPublish.at.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}</span>${S.lastPublish.url?` · <a href="${esc(S.lastPublish.url)}" target="_blank" rel="noopener">לצפייה בשינוי ב-GitHub</a>`:''}</p>`:''}
   <p class="hint">הדף הזה שומר את הלוח ישירות במאגר <b dir="ltr">${esc(gh.owner)}/${esc(gh.repo)}</b>, ודף ההורים מתעדכן תוך כדקה. כדי לפרסם צריך מפתח גישה אישי של GitHub עם הרשאת כתיבה למאגר הזה בלבד. המפתח נשמר רק בדפדפן הזה.</p>
   <label class="f" style="margin-top:8px">מפתח גישה (Personal access token)<input type="password" id="gh-token" value="${esc(gh.token)}" placeholder="github_pat_…" dir="ltr" autocomplete="off"></label>
   <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="gh-save">שמירת מפתח ובדיקה</button>${has?'<button type="button" class="btn sm" data-act="gh-forget">מחיקת המפתח מהמכשיר הזה</button>':''}</div></div>
