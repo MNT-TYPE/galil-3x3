@@ -667,7 +667,7 @@ function admLocked(){
   <form id="unlock-form" class="row" style="justify-content:center;margin-top:8px"><input type="${S.showPw?'text':'password'}" id="adm-pass" placeholder="סיסמת מנהלים" autocomplete="current-password" dir="auto" style="flex:1;min-width:160px"><button type="submit" class="btn primary" data-act="adm-unlock" ${S.unlocking?'disabled':''}>${S.unlocking?'בודק…':'כניסה'}</button></form>
   <label class="small muted" style="display:inline-flex;gap:6px;align-items:center;margin-top:8px;cursor:pointer"><input type="checkbox" data-act="toggle-pw" ${S.showPw?'checked':''} style="margin:0"> הצג סיסמה</label>
   ${S.unlockErr?`<p class="small" style="color:var(--danger);margin:8px 0 0">${esc(S.unlockErr)}</p>`:''}
-  <details style="margin-top:14px;text-align:right"><summary class="small muted" style="cursor:pointer">אני בעל/ת המאגר ויש לי מפתח GitHub</summary><label class="f" style="margin-top:8px">מפתח גישה<input type="password" id="gh-token" placeholder="github_pat_…" dir="ltr" autocomplete="off"></label><div class="row" style="margin-top:8px"><button type="button" class="btn sm" data-act="gh-save">שמירת מפתח ובדיקה</button></div></details></div>`;
+</div>`;
 }
 function admPasswordCard(){
   const has=!!S.settings.adminLock;
