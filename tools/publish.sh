@@ -1,12 +1,12 @@
 #!/bin/sh
 # Rebuilds the parents' view-only page into docs/ and pushes it to GitHub Pages.
 # Usage: tools/publish.sh [backup.json]
-#   - with no argument: uses seed.json
+#   - with no argument: rebuilds the pages from docs/data.json (what the managers published online)
 #   - with a file: uses a backup exported from the app (ניהול → גיבוי), and copies it over seed.json
 set -e
 cd "$(dirname "$0")/.."
-DATA="${1:-seed.json}"
-if [ "$DATA" != "seed.json" ]; then cp "$DATA" seed.json; fi
+git pull -q --rebase 2>/dev/null || true          # take edits made online through admin.html first
+if [ -n "$1" ]; then cp "$1" seed.json; else cp docs/data.json seed.json; fi   # docs/data.json is the source of truth
 REMOTE="$(git remote get-url origin 2>/dev/null || true)"
 SLUG="$(printf '%s' "$REMOTE" | sed -E 's#.*github\.com[:/]([^/]+)/([^/.]+)(\.git)?$#\1/\2#')"
 if [ -n "$SLUG" ] && [ "$SLUG" != "$REMOTE" ]; then
