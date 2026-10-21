@@ -46,7 +46,13 @@
     "short": "נערות",
     "order": 5
    }
-  ]
+  ],
+  "adminLock": {
+   "v": 1,
+   "salt": "CUDvoN4dZ7p4PDr3wNCC4g==",
+   "iv": "eVR0aCwnUAsltnGH",
+   "ct": "bnxzZzaEoHpRc/ZRrI3Nnmn6qE9I6D6qb04uHsxVYl5tZ0MQ3cE5JCr5yHW/N4v8fpOk1XatscaflVOknSCqmxuL5x3t4ELEWhI84bqAABV3nPb7nwiXtsb/ISe41TMB1LRmruN3A0kCn8bwHA=="
+  }
  },
  "teams": {
   "g_rk1": {

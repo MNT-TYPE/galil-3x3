@@ -364,6 +364,7 @@ const store={
     const draft=S.canWrite?lsGet('g3x3.draft',null):null;
     if(draft&&draft.data&&JSON.stringify(draft.data)!==JSON.stringify(BASE)){this.load(draft.data);S.hasDraft=true;}
     else{this.load(BASE);lsSet('g3x3.draft',undefined);}
+    if(S.backend==='github'&&!gh.token&&S.settings.adminLock){ui.tab='admin';try{history.replaceState(null,'','#admin');}catch(e){}} // locked management page opens on the password screen
     S.loaded=true;render();
   },
   persist(){if(!S.canWrite)return;const dirty=this.dirtyCount()>0;lsSet('g3x3.draft',dirty?{at:Date.now(),data:this.snapshot()}:undefined);S.hasDraft=dirty;},
