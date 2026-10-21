@@ -10,6 +10,8 @@
 | `index.html` | האפליקציה כולה (עיצוב, תצוגות, ניהול, בדיקות תקינות). מקור האמת. |
 | `seed.json` | נתוני הטורניר 2026 כפי שהועתקו מהגיליונות המקוריים. נטען אוטומטית בהרצה מקומית ראשונה. |
 | `tools/make_seed.py` | מייצר את `seed.json` מתוך הטבלאות שבקובץ (קל לערוך שם ולהריץ מחדש). |
+| `tools/build_static.py` | בונה את `docs/index.html`: דף יחיד, לצפייה בלבד, עם הנתונים והלוגו מוטמעים. |
+| `tools/publish.sh` | בנייה + commit + push ל-GitHub Pages בפקודה אחת (מקבל קובץ גיבוי מהאפליקציה). |
 | `tools/build_artifact.py` | בונה את דף ה-Artifact: גוף `index.html` + נתונים מוטמעים + לוגו. |
 | `assets/logo-*.jpg` | סמל הפועל גליל עליון (המקור והגרסה המוקטנת שמוטמעת בדף). |
 | `.claude/launch.json` | הגדרת שרת פיתוח מקומי (python http.server על פורט 8765). |
@@ -22,7 +24,31 @@ python3 -m http.server 8765
 
 ואז פותחים `http://localhost:8765`. במצב זה הנתונים נטענים מ-`seed.json` ושינויים נשמרים כטיוטה ב-localStorage של הדפדפן. "ניהול → גיבוי" מאפשר ייצוא/ייבוא JSON.
 
-## גרסה משותפת להורים (Artifact)
+## הקישור להורים: GitHub Pages (ללא התחברות)
+
+דף ה-Artifact ב-claude.ai דורש התחברות לצפייה, ולכן הקישור שנשלח להורים הוא עותק **לצפייה בלבד** שמתארח ב-GitHub Pages
+מתוך התיקייה `docs/` (ללא לשונית ניהול, בלי צורך בחשבון).
+
+הקמה חד-פעמית:
+1. יוצרים ב-github.com מאגר ציבורי חדש (למשל `galil-3x3`), ריק, בלי README.
+2. מחברים ודוחפים:
+   ```bash
+   git remote add origin https://github.com/<USER>/galil-3x3.git
+   git push -u origin main
+   ```
+3. במאגר: Settings → Pages → Build and deployment → Source: *Deploy from a branch* → Branch: `main`, Folder: `/docs` → Save.
+4. אחרי דקה הקישור להורים הוא `https://<USER>.github.io/galil-3x3/`.
+
+עדכון הלוח (תוצאות, שינויי שעות):
+1. עורכים בלשונית ניהול – בגרסה המקומית (`python3 -m http.server 8765`) או ב-Artifact.
+2. ניהול → גיבוי → "הורדת קובץ גיבוי".
+3. מריצים:
+   ```bash
+   tools/publish.sh ~/Downloads/galil-3x3-2026-….json
+   ```
+   הסקריפט מעתיק את הגיבוי ל-`seed.json`, בונה מחדש את `docs/index.html`, מבצע commit ו-push. ההורים רואים את העדכון תוך כדקה.
+
+## גרסת העורך ב-claude.ai (Artifact)
 
 הדף מפורסם כ-Artifact ב-claude.ai. **הנתונים מוטמעים בתוך הדף עצמו**, ולכן כל מי שמקבל את הקישור
 (גם בלי חשבון Claude) רואה את הלוח המלא – מתאים לשיתוף בקבוצת וואטסאפ של ההורים.
