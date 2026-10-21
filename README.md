@@ -29,15 +29,8 @@ python3 -m http.server 8765
 דף ה-Artifact ב-claude.ai דורש התחברות לצפייה, ולכן הקישור שנשלח להורים הוא עותק **לצפייה בלבד** שמתארח ב-GitHub Pages
 מתוך התיקייה `docs/` (ללא לשונית ניהול, בלי צורך בחשבון).
 
-הקמה חד-פעמית:
-1. יוצרים ב-github.com מאגר ציבורי חדש (למשל `galil-3x3`), ריק, בלי README.
-2. מחברים ודוחפים:
-   ```bash
-   git remote add origin https://github.com/<USER>/galil-3x3.git
-   git push -u origin main
-   ```
-3. במאגר: Settings → Pages → Build and deployment → Source: *Deploy from a branch* → Branch: `main`, Folder: `/docs` → Save.
-4. אחרי דקה הקישור להורים הוא `https://<USER>.github.io/galil-3x3/`.
+**הקישור להורים: https://mnt-type.github.io/galil-3x3/**
+(מאגר: https://github.com/MNT-TYPE/galil-3x3 · GitHub Pages מוגדר על `main` / `docs`. ה-GitHub CLI מחובר כ-MNT-TYPE במחשב זה.)
 
 עדכון הלוח (תוצאות, שינויי שעות):
 1. עורכים בלשונית ניהול – בגרסה המקומית (`python3 -m http.server 8765`) או ב-Artifact.
