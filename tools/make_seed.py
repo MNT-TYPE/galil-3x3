@@ -235,7 +235,7 @@ def build():
             "year": "2026",
             "date": "",
             "location": "",
-            "shareUrl": "https://claude.ai/artifact/P4xMcWLZwLUr4Vccogf4WX",
+            "shareUrl": "https://mnt-type.github.io/galil-3x3/",
             "courts": COURTS,
             "categories": CATEGORIES,
         },
