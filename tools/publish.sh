@@ -5,7 +5,7 @@
 #   - with a file: uses a backup exported from the app (ניהול → גיבוי), and copies it over seed.json
 set -e
 cd "$(dirname "$0")/.."
-git pull -q --rebase 2>/dev/null || true          # take edits made online through admin.html first
+git pull -q --rebase --autostash          # take edits made online through admin.html first
 if [ -n "$1" ]; then cp "$1" seed.json; else cp docs/data.json seed.json; fi   # docs/data.json is the source of truth
 REMOTE="$(git remote get-url origin 2>/dev/null || true)"
 SLUG="$(printf '%s' "$REMOTE" | sed -E 's#.*github\.com[:/]([^/]+)/([^/.]+)(\.git)?$#\1/\2#')"
